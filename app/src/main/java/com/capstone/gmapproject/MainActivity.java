@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.ViewGroup;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,10 +19,15 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import android.view.MotionEvent;
+import android.view.View;
+
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
+    private boolean isWindowFullscreen = false;
     private GoogleMap gMap;
+    private float startY;
     private FusedLocationProviderClient fusedLocationClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +36,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         mapFragment.getMapAsync(this);
+        View windowLayout = findViewById(R.id.window_layout);
+        windowLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        startY = event.getRawY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        float endY = event.getRawY();
+                        float deltaY = endY - startY;
 
+                        if (deltaY > 200 && !isWindowFullscreen) {
+                            // Swipe up to make window fullscreen
+                            expandWindow();
+                            isWindowFullscreen = true;
+                        } else if (deltaY < -200 && isWindowFullscreen) {
+                            // Swipe down to restore window size
+                            restoreWindow();
+                            isWindowFullscreen = false;
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
+
+    }
+    private void expandWindow() {
+        // Expand window to fullscreen
+        View windowLayout = findViewById(R.id.window_layout);
+        windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
+        windowLayout.requestLayout();
+    }
+
+    private void restoreWindow() {
+        // Restore window to original size
+        View windowLayout = findViewById(R.id.window_layout);
+        windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+        windowLayout.requestLayout();
     }
 
     @Override

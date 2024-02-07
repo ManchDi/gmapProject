@@ -11,5 +11,25 @@
         android:id="@+id/id_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="300dp"/>
+    <!-- Window Element -->
+    <FrameLayout
+        android:id="@+id/window_layout"
+        android:layout_width="match_parent"
+        android:layout_height="432dp"
+
+        android:layout_below="@+id/id_map"
+        android:layout_marginTop="-1dp"
+        android:background="@android:color/white">
+        <!--android:layout_below="@id/map_fragment"-->
+        <!-- Add your content for the window here -->
+        <View
+            android:id="@+id/drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_gravity="center"
+            android:background="@drawable/drag_handle_background" />
+
+    </FrameLayout>
+
 </RelativeLayout>
