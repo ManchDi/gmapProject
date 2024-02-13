@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
@@ -29,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap gMap;
     private float startY;
     private FusedLocationProviderClient fusedLocationClient;
+    private SwipeGestureHandler swipeGestureHandler;
+    private GestureDetector gestureDetector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,41 +40,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         mapFragment.getMapAsync(this);
         View windowLayout = findViewById(R.id.window_layout);
+        swipeGestureHandler = new SwipeGestureHandler(this);
+        gestureDetector = new GestureDetector(this, swipeGestureHandler);
+
         windowLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        startY = event.getRawY();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        float endY = event.getRawY();
-                        float deltaY = endY - startY;
-
-                        if (deltaY > 200 && !isWindowFullscreen) {
-                            // Swipe up to make window fullscreen
-                            expandWindow();
-                            isWindowFullscreen = true;
-                        } else if (deltaY < -200 && isWindowFullscreen) {
-                            // Swipe down to restore window size
-                            restoreWindow();
-                            isWindowFullscreen = false;
-                        }
-                        break;
-                }
-                return true;
+                return gestureDetector.onTouchEvent(event);
             }
         });
 
     }
-    private void expandWindow() {
+    public void expandWindow() {
         // Expand window to fullscreen
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
         windowLayout.requestLayout();
     }
 
-    private void restoreWindow() {
+    public void restoreWindow() {
         // Restore window to original size
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -92,6 +79,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Permission is already granted
             zoomToCurrentLocation();
         }
+        gMap.setOnMarkerClickListener(marker -> {
+            // Show the white window
+            showWhiteWindow();
+            return false; // Return false to allow default marker behavior
+        });
     }
 
     private void zoomToCurrentLocation() {
@@ -107,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             // Move the camera to the user's current location and zoom in
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
+                            gMap.addMarker(new MarkerOptions().position(currentLatLng).title("Eburg"));
+
                         } else {
                             // Handle the case where location is null
                             LatLng locationDef = new LatLng(46.995, -120.549);
@@ -136,5 +130,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationDef, 12));
             }
         }
+    }
+    private void showWhiteWindow() {
+        View windowLayout = findViewById(R.id.window_layout);
+        windowLayout.setVisibility(View.VISIBLE);
     }
 }

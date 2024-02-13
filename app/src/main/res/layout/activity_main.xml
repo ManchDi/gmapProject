@@ -20,7 +20,8 @@
 
         android:layout_below="@+id/id_map"
         android:layout_marginTop="-1dp"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+        android:visibility="gone">
         <!--android:layout_below="@id/map_fragment"-->
         <!-- Add your content for the window here -->
         <View
@@ -29,6 +30,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center"
             android:background="@drawable/drag_handle_background" />
+
 
     </FrameLayout>
 
