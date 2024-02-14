@@ -100,7 +100,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             // Move the camera to the user's current location and zoom in
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
                             gMap.addMarker(new MarkerOptions().position(currentLatLng).title("Eburg"));
-
+                            LatLng locationDef = new LatLng(46.995, -120.549);
+                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2"));
                         } else {
                             // Handle the case where location is null
                             LatLng locationDef = new LatLng(46.995, -120.549);
@@ -131,7 +132,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+    //Invokes after marker click
     private void showWhiteWindow() {
+        //creating reference to the map, pulling params, changing the height
+        SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        params.height = 1000;
+        mapFragment.getView().setLayoutParams(params);
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
     }
