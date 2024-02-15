@@ -6,6 +6,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,6 +21,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import android.view.MotionEvent;
 import android.view.View;
@@ -26,12 +29,8 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
     private static final int REQUEST_LOCATION_PERMISSION = 1;
-    private boolean isWindowFullscreen = false;
     private GoogleMap gMap;
-    private float startY;
     private FusedLocationProviderClient fusedLocationClient;
-    private SwipeGestureHandler swipeGestureHandler;
-    private GestureDetector gestureDetector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,29 +39,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         mapFragment.getMapAsync(this);
         View windowLayout = findViewById(R.id.window_layout);
-        swipeGestureHandler = new SwipeGestureHandler(this);
-        gestureDetector = new GestureDetector(this, swipeGestureHandler);
 
-        windowLayout.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        });
-
-    }
-    public void expandWindow() {
-        // Expand window to fullscreen
-        View windowLayout = findViewById(R.id.window_layout);
-        windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.MATCH_PARENT;
-        windowLayout.requestLayout();
-    }
-
-    public void restoreWindow() {
-        // Restore window to original size
-        View windowLayout = findViewById(R.id.window_layout);
-        windowLayout.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
-        windowLayout.requestLayout();
     }
 
     @Override
@@ -81,11 +58,45 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         gMap.setOnMarkerClickListener(marker -> {
             // Show the white window
-            showWhiteWindow();
+            if(marker.getTag()!=null){
+                Integer clickCount = (Integer) marker.getTag();
+                showWhiteWindow(clickCount);
+            } else {
+                showWhiteWindow(0);
+            }
+
+
             return false; // Return false to allow default marker behavior
         });
+        gMap.setMyLocationEnabled(true);
     }
+    public void zoomInToCurrentLocation(android.view.View view) {
+        // Check location permission
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Request location permission if not granted
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+            return;
+        }
 
+        // Get last known location
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(this, location -> {
+                        if (location != null) {
+
+                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                            // Move the camera to the user's current location and zoom in
+                            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                        } else {
+                            Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
+                        }
+                    });
+        }
+    }
     private void zoomToCurrentLocation() {
 
         // Check location permission
@@ -99,13 +110,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                             // Move the camera to the user's current location and zoom in
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
-                            gMap.addMarker(new MarkerOptions().position(currentLatLng).title("Eburg"));
+                            gMap.addMarker(new MarkerOptions().position(currentLatLng).title("EburgCur")).setTag(1);
                             LatLng locationDef = new LatLng(46.995, -120.549);
-                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2"));
+                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2")).setTag(2);
                         } else {
                             // Handle the case where location is null
                             LatLng locationDef = new LatLng(46.995, -120.549);
-                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg"));
+                            gMap.addMarker(new MarkerOptions().position(locationDef).title("EburgNoLoc"));
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationDef, 12));
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_SHORT).show();
                         }
@@ -127,19 +138,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 //zoom in to Eburg
                 LatLng locationDef = new LatLng(46.995, -120.549);
-                gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg"));
+                gMap.addMarker(new MarkerOptions().position(locationDef).title("EburgDenied"));
                 gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationDef, 12));
             }
         }
     }
     //Invokes after marker click
-    private void showWhiteWindow() {
+    private void showWhiteWindow(Integer id) {
         //creating reference to the map, pulling params, changing the height
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
         params.height = 1000;
         mapFragment.getView().setLayoutParams(params);
+
+        Button zoomButton = findViewById(R.id.zoom_button);
+        RelativeLayout.LayoutParams buttonParams = (RelativeLayout.LayoutParams) zoomButton.getLayoutParams();
+
+        // Updating the button's position to stay on the new map size
+        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 0);
+        buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        buttonParams.setMargins(0, 16, 0, 16); // Adjust top and bottom margins as needed
+
+        // Applying updated parameters to the button
+        zoomButton.setLayoutParams(buttonParams);
+
+        //setting list visible
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
+        Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
     }
 }

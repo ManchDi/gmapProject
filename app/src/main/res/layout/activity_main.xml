@@ -12,7 +12,18 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
     <!-- Window Element -->
+
+    <Button
+        android:id="@+id/zoom_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom In"
+        android:onClick="zoomInToCurrentLocation"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="16dp" />
     <FrameLayout
         android:id="@+id/window_layout"
         android:layout_width="match_parent"
@@ -24,14 +35,6 @@
         android:visibility="gone">
         <!--android:layout_below="@id/map_fragment"-->
         <!-- Add your content for the window here -->
-        <View
-            android:id="@+id/drag_handle"
-            android:layout_width="match_parent"
-            android:layout_height="4dp"
-            android:layout_gravity="center"
-            android:background="@drawable/drag_handle_background" />
-
-
     </FrameLayout>
 
 </RelativeLayout>

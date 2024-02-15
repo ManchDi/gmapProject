@@ -27,10 +27,10 @@ public class SwipeGestureHandler extends GestureDetector.SimpleOnGestureListener
         if (Math.abs(deltaY) > SWIPE_THRESHOLD) {
             if (deltaY > 0) {
                 // Swipe down
-                mainActivity.restoreWindow();
+                //mainActivity.restoreWindow();
             } else {
                 // Swipe up
-                mainActivity.expandWindow();
+               // mainActivity.expandWindow();
             }
             return true;
         }
