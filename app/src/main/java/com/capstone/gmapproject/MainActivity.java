@@ -1,4 +1,8 @@
 package com.capstone.gmapproject;
+import android.annotation.SuppressLint;
+import android.content.ContentValues;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -31,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private static final int REQUEST_LOCATION_PERMISSION = 1;
     private GoogleMap gMap;
     private FusedLocationProviderClient fusedLocationClient;
+    private DbConnector dbConnector;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,6 +44,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         mapFragment.getMapAsync(this);
         View windowLayout = findViewById(R.id.window_layout);
+        dbConnector = new DbConnector(this);
+        Cursor cursor = getAllChargerLocations();
+
+        // Display data using Toast
+        displayChargerLocations(cursor);
+
+        // Don't forget to close the cursor when done
+        if (cursor != null) {
+            cursor.close();
+        }
 
     }
 
@@ -96,6 +111,29 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     });
         }
+    }
+    private Cursor getAllChargerLocations() {
+        SQLiteDatabase db = dbConnector.getReadableDatabase();
+        return db.query("chargerLocations", null, null, null, null, null, null);
+    }
+    private void displayChargerLocations(Cursor cursor) {
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
+                @SuppressLint("Range") double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+
+                String message = "Latitude: " + latitude + ", Longitude: " + longitude;
+
+                // Display data using Toast
+                showToast(message);
+            } while (cursor.moveToNext());
+        } else {
+            showToast("No charger locations found");
+        }
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
     private void zoomToCurrentLocation() {
 
