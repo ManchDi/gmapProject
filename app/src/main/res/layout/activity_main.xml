@@ -7,13 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- Window Element -->
+
     <fragment
         android:id="@+id/id_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
-
-    <!-- Window Element -->
+        android:layout_height="match_parent" />
 
     <Button
         android:id="@+id/zoom_button"
@@ -36,5 +36,19 @@
         <!--android:layout_below="@id/map_fragment"-->
         <!-- Add your content for the window here -->
     </FrameLayout>
+
+    <Button
+        android:id="@+id/profile_button"
+        android:layout_width="109dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="670dp"
+        android:layout_marginEnd="26dp"
+        android:layout_marginBottom="16dp"
+        android:layout_toStartOf="@+id/zoom_button"
+        android:text="Profile" />
 
 </RelativeLayout>
