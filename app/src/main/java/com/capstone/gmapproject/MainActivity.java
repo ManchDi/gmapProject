@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -213,6 +214,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {
+        
+        TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
+        chargerType.setText("n/a");
+        TextView connectionType = (TextView) findViewById(R.id.txtShowConnectionType);
+        connectionType.setText("n/a");
+        TextView wattage = (TextView) findViewById(R.id.txtShowWattage);
+        wattage.setText("n/a");
+
         //creating reference to the map, pulling params, changing the height
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
