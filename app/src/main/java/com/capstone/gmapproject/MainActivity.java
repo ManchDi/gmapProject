@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
                             gMap.addMarker(new MarkerOptions().position(currentLatLng).title("EburgCur")).setTag(1);
                             LatLng locationDef = new LatLng(46.995, -120.549);
-                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2")).setTag(2);
+                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2")).  setTag(2);
                         } else {
                             // Handle the case where location is null
                             LatLng locationDef = new LatLng(46.995, -120.549);

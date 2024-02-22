@@ -50,4 +50,9 @@
     <string name="cost">Cost:</string>
     <string name="time">Time:</string>
     <string name="go_back">Go back</string>
+    <string name="entry_5">Entry 5</string>
+    <string name="entry_4">Entry 4</string>
+    <string name="entry_3">Entry 3</string>
+    <string name="entry_2">Entry 2</string>
+    <string name="username">username</string>
 </resources>
