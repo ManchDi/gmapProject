@@ -47,15 +47,16 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         View windowLayout = findViewById(R.id.window_layout);
         dbConnector = new DbConnector(this);
-        Cursor cursor = getAllChargerLocations();
+        //dbConnector.fetchAllDatabaseAndTableNames();
+        //Cursor cursor = getAllChargerLocations();
 
         // Display data using Toast
-        displayChargerLocations(cursor);
+        /*displayChargerLocations(cursor);
 
         // Don't forget to close the cursor when done
         if (cursor != null) {
             cursor.close();
-        }
+        }*/
 
     }
 
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                             // Move the camera to the user's current location and zoom in
-                            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                            //dbConnector.listAllTables();
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
