@@ -43,4 +43,11 @@
         libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
         vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
     </string>
+    <string name="address">Address:</string>
+    <string name="entry_1">Entry 1</string>
+    <string name="type">Type:</string>
+    <string name="charger">Charger:</string>
+    <string name="cost">Cost:</string>
+    <string name="time">Time:</string>
+    <string name="go_back">Go back</string>
 </resources>

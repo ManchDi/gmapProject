@@ -1,6 +1,7 @@
 package com.capstone.gmapproject;
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
@@ -49,6 +50,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         dbConnector = new DbConnector(this);
         Cursor cursor = getAllChargerLocations();
 
+        //Button for switching between Main and Profile
+        Button profileButton = (Button) findViewById(R.id.profile_button);
+        profileButton.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v){
+                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
+            }
+        });
+
         // Display data using Toast
         displayChargerLocations(cursor);
 
@@ -56,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         if (cursor != null) {
             cursor.close();
         }
-
     }
 
     @Override
