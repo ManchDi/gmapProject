@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -37,7 +38,9 @@ import android.view.View;
 import java.io.IOException;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.EventListener;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
@@ -47,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DbConnector dbConnector;
     private SQLiteDatabase db;
     private static int userID;
+    private int defualtRadius=1;
+    List<Marker> markerList;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         dbConnector = new DbConnector(this);
+        markerList=new ArrayList<>();
         /*try {
             dbConnector.copyDatabaseFromAssets();
         } catch (IOException e) {
@@ -130,16 +137,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             double lat=location.getLatitude() ;
                             double lng=location.getLongitude();
                             LatLng currentLatLng = new LatLng(lat,lng );
-
+                            removeMarkers();
+                            placeStationsOnMap(dbConnector.getStations(lng,lat,defualtRadius));
                             // Move the camera to the user's current location and zoom in
-                            dbConnector.getStations(lng,lat,1);
+
+
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
                     });
         }
     }
+    public void removeMarkers(){
+        for (Marker marker : markerList) {
+            marker.remove(); // Remove the marker from the map
+        }
+    }
+    public void placeStationsOnMap(@NonNull List<Station> stations) {
+        for (Station station : stations) {
+            // Create MarkerOptions for each station
+            LatLng currentLatLng =new LatLng(station.getLatitude(), station.getLongitude());
+            // Add the marker to the Google Map
+            Marker marker = gMap.addMarker(new MarkerOptions().position(currentLatLng).title(station.getName()));
+            marker.setTag(station.getId());
+            markerList.add(marker);
 
+        }
+    }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
@@ -152,14 +176,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
-
-                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            double lat = location.getLatitude(), lng=location.getLongitude();
+                            LatLng currentLatLng = new LatLng(lat, lng);
 
                             // Move the camera to the user's current location and zoom in
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
-                            gMap.addMarker(new MarkerOptions().position(currentLatLng).title("EburgCur")).setTag(1);
-                            LatLng locationDef = new LatLng(46.995, -120.549);
-                            gMap.addMarker(new MarkerOptions().position(locationDef).title("Eburg2")).setTag(2);
+                            placeStationsOnMap(dbConnector.getStations(lng,lat, defualtRadius));
                         } else {
                             // Handle the case where location is null
                             LatLng locationDef = new LatLng(46.995, -120.549);
@@ -192,6 +214,34 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {
+        db = dbConnector.getReadableDatabase();
+
+        //Based on the ID given, pull the charger_type, connection_type, and wattage of that charger, just pull the first one possible
+        //First index is charger type, second connection type, third wattage
+        String newID = id.toString();
+
+        String query = "SELECT charger_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String charger_type = cursor.getString(0);
+
+        query = "SELECT connection_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String connection_type = cursor.getString(0);
+
+        query = "SELECT wattage FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String wattage_query = cursor.getString(0);
+
+        TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
+        chargerType.setText(charger_type);
+        TextView connectionType = (TextView) findViewById(R.id.txtShowConnectionType);
+        connectionType.setText(connection_type);
+        TextView wattage = (TextView) findViewById(R.id.txtShowWattage);
+        wattage.setText(wattage_query);
+
         //creating reference to the map, pulling params, changing the height
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
