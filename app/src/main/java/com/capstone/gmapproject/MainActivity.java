@@ -224,16 +224,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String charger_type = cursor.getString(0);
+        if(charger_type.equals("")) charger_type = "n/a";
 
         query = "SELECT connection_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
         cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String connection_type = cursor.getString(0);
+        if(connection_type.equals("")) charger_type = "n/a";
 
         query = "SELECT wattage FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
         cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String wattage_query = cursor.getString(0);
+        if(wattage_query.equals("")) wattage_query = "n/a";
+        else wattage_query += " kW";
+
 
         TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
         chargerType.setText(charger_type);

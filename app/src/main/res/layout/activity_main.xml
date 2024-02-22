@@ -51,7 +51,7 @@
 
         android:layout_below="@+id/id_map"
         android:layout_marginTop="-1dp"
-        android:background="@color/blue"
+        android:background="@color/white"
         android:visibility="gone">
         <!--android:layout_below="@id/map_fragment"-->
         <!-- Add your content for the window here -->
