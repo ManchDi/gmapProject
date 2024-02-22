@@ -54,11 +54,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         dbConnector = new DbConnector(this);
-        try {
+        /*try {
             dbConnector.copyDatabaseFromAssets();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }
+        }*/
         //initialize login screen
         loginScene();
     }
@@ -127,11 +127,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             fusedLocationClient.getLastLocation()
                     .addOnSuccessListener(this, location -> {
                         if (location != null) {
-
-                            LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+                            double lat=location.getLatitude() ;
+                            double lng=location.getLongitude();
+                            LatLng currentLatLng = new LatLng(lat,lng );
 
                             // Move the camera to the user's current location and zoom in
-                            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 15));
+                            dbConnector.getStations(lng,lat,1);
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
@@ -139,26 +140,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
-
-    private Cursor getAllChargerLocations() {
-        SQLiteDatabase db = dbConnector.getReadableDatabase();
-        return db.query("chargerLocations", null, null, null, null, null, null);
-    }
-    private void displayChargerLocations(Cursor cursor) {
-        if (cursor != null && cursor.moveToFirst()) {
-            do {
-                @SuppressLint("Range") double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
-                @SuppressLint("Range") double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
-
-                String message = "Latitude: " + latitude + ", Longitude: " + longitude;
-
-                // Display data using Toast
-                showToast(message);
-            } while (cursor.moveToNext());
-        } else {
-            showToast("No charger locations found");
-        }
-    }
 
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
