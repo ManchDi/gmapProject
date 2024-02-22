@@ -30,6 +30,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.IOException;
 import java.util.EventListener;
 
 
@@ -47,6 +48,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapFragment.getMapAsync(this);
         View windowLayout = findViewById(R.id.window_layout);
         dbConnector = new DbConnector(this);
+       /* try {
+            dbConnector.copyDatabaseFromAssets();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }*/
         //dbConnector.fetchAllDatabaseAndTableNames();
         //Cursor cursor = getAllChargerLocations();
 
@@ -108,7 +114,12 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             LatLng currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
 
                             // Move the camera to the user's current location and zoom in
-                            //dbConnector.listAllTables();
+                            dbConnector.listAllTables();
+                            dbConnector.listAllEntriesOfTable("stations");
+                            dbConnector.listAllEntriesOfTable("user_cred");
+                            dbConnector.listAllEntriesOfTable("user_info");
+                            dbConnector.getStations(location.getLongitude(), location.getLatitude(), 10 );
+                            //dbConnector.addUser("addTest", "manchD","123");
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
@@ -164,7 +175,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
         }
     }
-
+    private void addUser(String username, String password){
+        dbConnector.addUser(username, password);
+    }
     @Override
     //Fetching permission response
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
