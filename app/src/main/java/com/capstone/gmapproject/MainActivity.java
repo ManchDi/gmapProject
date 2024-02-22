@@ -235,6 +235,39 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {
+        db = dbConnector.getReadableDatabase();
+
+        //Based on the ID given, pull the charger_type, connection_type, and wattage of that charger, just pull the first one possible
+        //First index is charger type, second connection type, third wattage
+        String newID = id.toString();
+
+        String query = "SELECT charger_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        Cursor cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String charger_type = cursor.getString(0);
+        if(charger_type.equals("")) charger_type = "n/a";
+
+        query = "SELECT connection_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String connection_type = cursor.getString(0);
+        if(connection_type.equals("")) charger_type = "n/a";
+
+        query = "SELECT wattage FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
+        cursor = db.rawQuery(query, null);
+        cursor.moveToNext();
+        String wattage_query = cursor.getString(0);
+        if(wattage_query.equals("")) wattage_query = "n/a";
+        else wattage_query += " kW";
+
+
+        TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
+        chargerType.setText(charger_type);
+        TextView connectionType = (TextView) findViewById(R.id.txtShowConnectionType);
+        connectionType.setText(connection_type);
+        TextView wattage = (TextView) findViewById(R.id.txtShowWattage);
+        wattage.setText(wattage_query);
+
         //creating reference to the map, pulling params, changing the height
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
