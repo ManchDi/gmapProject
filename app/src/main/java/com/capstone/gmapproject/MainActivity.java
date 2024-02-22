@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        setContentView(R.layout.login_screen);
 
         dbConnector = new DbConnector(this);
         try {
@@ -63,35 +62,19 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         db = dbConnector.getReadableDatabase();
 
-        //create buttons for login/create account and set up listeners
-        Button login = (Button) findViewById(R.id.btnLogin);
-        login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //throw to method for authenticating login
-                boolean valid = authenticateLogin();
-                if(!valid) {
-                    printFalseCredentials();
-                }
-                else{
-                    setUserID();
-                }
-            }
-        });
-        Button createAccount = (Button) findViewById(R.id.btnCreate);
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //throw to method for creating account
-            }
-        });
+        //initialize login screen
+
+        loginScene();
     }
 
     //function to switch layout to the map after login is authenticated
     public void mapLayout()
     {
         setContentView(R.layout.activity_main);
-         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
+         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
          mapFragment.getMapAsync(this);
          View windowLayout = findViewById(R.id.window_layout);
+         /*
          Cursor cursor = getAllChargerLocations();
 
          // Display data using Toast
@@ -101,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
          if (cursor != null) {
          cursor.close();
          }
+          */
     }
 
     @Override
@@ -257,8 +241,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //method to check if accurate username and password were given, returns true if so, false if not
     private boolean authenticateLogin()
     {
-        boolean valid;
-
         //get the username and password from their respective text fields
         EditText usernameText = (EditText) findViewById(R.id.username_text_input);
         String username = usernameText.getText().toString();
@@ -269,15 +251,24 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //compare username to the usernames in the database to see if a match is present
         String query = "SELECT * FROM user_info WHERE username = ?";
         Cursor cursor = db.rawQuery(query, new String[]{username});
-        valid = cursor.getCount() > 0;
+        if(!(cursor.getCount() > 0)) return false;
+        cursor.close();
+
+        query = "SELECT user_id FROM user_info WHERE username = ?";
+        cursor = db.rawQuery(query, new String[]{username});
+        cursor.moveToFirst();
+        int tempUserID = cursor.getInt(0);
         cursor.close();
 
         //check password
-        query = "SELECT * FROM user_cred WHERE password = ?";
-        cursor = db.rawQuery(query, new String[]{password});
-        valid = cursor.getCount() > 0;
+        query = "SELECT password FROM user_cred WHERE user_id = ?";
+        cursor = db.rawQuery(query, new String[]{String.valueOf(tempUserID)});
+       if(!(cursor.getCount() > 0)) return false;
+       cursor.moveToFirst();
+       String compare = cursor.getString(0);
+       if(!compare.equals(password)) return false;
 
-        return valid;
+        return true;
     }
 
     //method to create new user account, returns false if given username already exists
@@ -288,6 +279,143 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
 
         return valid;
+    }
+
+    //set the static user ID variable to the logged in user's ID, for future use.
+    private void setUserID() {
+        String query = "SELECT user_id FROM user_info WHERE username = ?";
+
+        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
+        String username = usernameText.getText().toString();
+
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+        cursor.moveToFirst();
+        userID = cursor.getInt(0);
+        cursor.close();
+
+    }
+
+    private void createAccountScene()
+    {
+        setContentView(R.layout.create_account_screen);
+        Button back = (Button) findViewById(R.id.btnBack);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //back to login screen
+                loginScene();
+            }
+        });
+
+        Button createAccount = (Button) findViewById(R.id.btnCreate);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //first, check if that username is currently in use, then if not, create the account
+                EditText usernameText = (EditText) findViewById(R.id.createUsername_text_input);
+                String username = usernameText.getText().toString();
+
+                EditText passwordText = (EditText) findViewById(R.id.createPassword_text_input);
+                String password = passwordText.getText().toString();
+
+                //query database to see if same username exists
+                String query = "SELECT * FROM user_info WHERE username = ?";
+                Cursor cursor = db.rawQuery(query, new String[]{username});
+                int error = cursor.getCount();
+                cursor.close();
+                //if it exists, they cannot create that account
+                if(error > 0)
+                {
+                    printCreationError();
+                }
+                //if not, make the new account
+                else
+                {
+
+                    db = dbConnector.getWritableDatabase();
+
+                    ContentValues usernameValues = new ContentValues();
+                    usernameValues.put("username", username);
+
+                    long result;
+
+                    result = db.insert("user_info", null, usernameValues);
+                    if(result == -1) confirmError();
+
+                    ContentValues passwordValues = new ContentValues();
+                    passwordValues.put("password", password);
+                    result = db.insert("user_cred", null, passwordValues);
+
+                    if(result == -1) confirmError();
+                    else confirmCreation();
+                }
+
+            }
+        });
+    }
+
+    private void loginScene()
+    {
+        setContentView(R.layout.login_screen);
+
+        //create buttons for login/create account and set up listeners
+        Button login = (Button) findViewById(R.id.btnLogin);
+        login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //throw to method for authenticating login
+                boolean valid = authenticateLogin();
+                if(!valid) {
+                    printFalseCredentials();
+                }
+                else{
+                    setUserID();
+                    mapLayout();
+                }
+            }
+        });
+
+        //transition to account creation page
+        Button createAccount = (Button) findViewById(R.id.btnCreate);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                createAccountScene();
+            }
+        });
+    }
+
+    private void printCreationError()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setTitle("Invalid Credentials");
+        alertDialogBuilder.setMessage("This username already exists, try again.");
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
+    }
+
+    private void confirmCreation()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setTitle("Account Created");
+        alertDialogBuilder.setMessage("You have successfully created an account, please go back to the main menu and log in.");
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
+    }
+
+    private void confirmError()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setTitle("Account Not Created");
+        alertDialogBuilder.setMessage("There was an error creating your account, please try again.");
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
     }
 
     private void printFalseCredentials()
@@ -301,18 +429,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         alertDialog.show();
 
-    }
-
-    private void setUserID() {
-        String query = "SELECT user_id FROM user_info WHERE username = ?";
-
-        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
-        String username = usernameText.getText().toString();
-
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-        if (cursor.moveToFirst()) {
-            userID = cursor.getInt(0);
-        }
-        cursor.close();
     }
 }
