@@ -178,5 +178,32 @@ public class DbConnector extends SQLiteOpenHelper {
         }
         return stationList;
     }
+    public ArrayList<String> getHistoryDatum(int chId) {
+        ArrayList<String> stationList = new ArrayList<>();
+        Cursor cursor;
+        SQLiteDatabase db = this.getReadableDatabase();
+        cursor = db.rawQuery("SELECT st_id FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
+        if (cursor.moveToFirst()) {
+            String address = cursor.getString(0);
+            stationList.add(address);
+        }
+        cursor.close();
 
+        // Query for charger type
+        cursor = db.rawQuery("SELECT charger_type FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
+        if (cursor.moveToFirst()) {
+            String type = cursor.getString(0);
+            stationList.add(type);
+        }
+        cursor.close();
+
+        // Query for connection type
+        cursor = db.rawQuery("SELECT connection_type FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
+        if (cursor.moveToFirst()) {
+            String charger = cursor.getString(0);
+            stationList.add(charger);
+        }
+        cursor.close();
+        return stationList;
+    }
 }

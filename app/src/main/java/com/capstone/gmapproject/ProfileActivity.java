@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Queue;
@@ -23,7 +26,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DbConnector dbConnector;
     private Cursor cursor;
 
-    private SQLiteDatabase chargeChartsDB = dbConnector.getReadableDatabase();
+    private SQLiteDatabase chargeChartsDB;
     private String username;
     public TextView username_box;
 
@@ -31,7 +34,7 @@ public class ProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
+        dbConnector = new DbConnector(this);
         //Button for switching between Profile and Main
         Button goBackButton = (Button) findViewById(R.id.go_back_button);
         goBackButton.setOnClickListener(new View.OnClickListener(){
@@ -54,19 +57,17 @@ public class ProfileActivity extends AppCompatActivity {
     }
 
     private void getEntry(int ID){
-        cursor = chargeChartsDB.rawQuery("SELECT st_id\n" +
-                                            "FROM chargers\n" +
-                                            "WHERE ch_id = " + ID, null);
-        String address = cursor.getString(0);
-        cursor = chargeChartsDB.rawQuery("SELECT charger_type\n" +
-                                            "FROM chargers\n" +
-                                            "WHERE ch_id = " + ID, null);
-        String type = cursor.getString(0);
-        cursor = chargeChartsDB.rawQuery("SELECT connection_type\n" +
-                                            "FROM chargers\n" +
-                                            "WHERE ch_id = " + ID, null);
-        String charger = cursor.getString(0);
-        HistoryEntry entry = new HistoryEntry(address, type, charger);
-        this.addEntry(entry);
+        ArrayList<String> entries =dbConnector.getHistoryDatum(ID);
+        if (entries.size() >= 3) {
+            String address = entries.get(0);
+            String type = entries.get(1);
+            String charger = entries.get(2);
+
+            HistoryEntry entry = new HistoryEntry(address, type, charger);
+            this.addEntry(entry);
+        } else {
+            // Handle the case where the returned ArrayList doesn't contain enough elements
+            Log.e("dbHelper", "Insufficient data returned from getHistoryDatum");
+        }
     }
 }
