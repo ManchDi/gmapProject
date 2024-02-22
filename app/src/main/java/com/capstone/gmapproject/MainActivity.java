@@ -1,7 +1,10 @@
 package com.capstone.gmapproject;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import android.Manifest;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -30,6 +34,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.EventListener;
 
 
@@ -38,25 +45,62 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GoogleMap gMap;
     private FusedLocationProviderClient fusedLocationClient;
     private DbConnector dbConnector;
+    private SQLiteDatabase db;
+    private static int userID;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        setContentView(R.layout.activity_main);
-        SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
-        mapFragment.getMapAsync(this);
-        View windowLayout = findViewById(R.id.window_layout);
+        setContentView(R.layout.login_screen);
+
         dbConnector = new DbConnector(this);
-        Cursor cursor = getAllChargerLocations();
-
-        // Display data using Toast
-        displayChargerLocations(cursor);
-
-        // Don't forget to close the cursor when done
-        if (cursor != null) {
-            cursor.close();
+        try {
+            dbConnector.copyDatabaseFromAssets();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
+        db = dbConnector.getReadableDatabase();
+
+        //create buttons for login/create account and set up listeners
+        Button login = (Button) findViewById(R.id.btnLogin);
+        login.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //throw to method for authenticating login
+                boolean valid = authenticateLogin();
+                if(!valid) {
+                    printFalseCredentials();
+                }
+                else{
+                    setUserID();
+                }
+            }
+        });
+        Button createAccount = (Button) findViewById(R.id.btnCreate);
+        createAccount.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                //throw to method for creating account
+            }
+        });
+    }
+
+    //function to switch layout to the map after login is authenticated
+    public void mapLayout()
+    {
+        setContentView(R.layout.activity_main);
+         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
+         mapFragment.getMapAsync(this);
+         View windowLayout = findViewById(R.id.window_layout);
+         Cursor cursor = getAllChargerLocations();
+
+         // Display data using Toast
+         displayChargerLocations(cursor);
+
+         // Don't forget to close the cursor when done
+         if (cursor != null) {
+         cursor.close();
+         }
     }
 
     @Override
@@ -114,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     });
         }
     }
+
+
     private Cursor getAllChargerLocations() {
         SQLiteDatabase db = dbConnector.getReadableDatabase();
         return db.query("chargerLocations", null, null, null, null, null, null);
@@ -206,5 +252,67 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
         Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
+    }
+
+    //method to check if accurate username and password were given, returns true if so, false if not
+    private boolean authenticateLogin()
+    {
+        boolean valid;
+
+        //get the username and password from their respective text fields
+        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
+        String username = usernameText.getText().toString();
+
+        EditText passwordText = (EditText) findViewById(R.id.password_text_input);
+        String password = passwordText.getText().toString();
+
+        //compare username to the usernames in the database to see if a match is present
+        String query = "SELECT * FROM user_info WHERE username = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+        valid = cursor.getCount() > 0;
+        cursor.close();
+
+        //check password
+        query = "SELECT * FROM user_cred WHERE password = ?";
+        cursor = db.rawQuery(query, new String[]{password});
+        valid = cursor.getCount() > 0;
+
+        return valid;
+    }
+
+    //method to create new user account, returns false if given username already exists
+    private boolean createAccount()
+    {
+        boolean valid = false;
+
+
+
+        return valid;
+    }
+
+    private void printFalseCredentials()
+    {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+        alertDialogBuilder.setTitle("Incorrect Login Credentials");
+        alertDialogBuilder.setMessage("Your username or password was incorrect, please try again.");
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        alertDialog.show();
+
+    }
+
+    private void setUserID() {
+        String query = "SELECT user_id FROM user_info WHERE username = ?";
+
+        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
+        String username = usernameText.getText().toString();
+
+        Cursor cursor = db.rawQuery(query, new String[]{username});
+        if (cursor.moveToFirst()) {
+            userID = cursor.getInt(0);
+        }
+        cursor.close();
     }
 }
