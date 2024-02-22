@@ -30,7 +30,25 @@ public class DbConnector extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
+    public void checkDatabaseExistence() throws IOException {
+        SQLiteDatabase checkDB = null;
+        Log.d("dbHelper", "checkingExistence");
+        try {
+            String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
+            checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
+            Log.d("dbHelper", "db exists");
+        } catch (SQLException e) {
+            // Database does not exist, create it
+            Log.d("dbHelper", "db doesnt exist, going to create");
 
+            copyDatabaseFromAssets();
+            Log.d("dbHelper", "finished db creation");
+
+        }
+        if (checkDB != null) {
+            checkDB.close();
+        }
+    }
     //copy the db from the assets folder
     public void copyDatabaseFromAssets() throws IOException {
         Log.d("dbHelper", "inside copy");

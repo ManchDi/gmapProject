@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.GestureDetector;
@@ -50,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DbConnector dbConnector;
     private SQLiteDatabase db;
     private static int userID;
-    private int defualtRadius=1;
+    private int defualtRadius=6;
+    private TextView radiusView;
     List<Marker> markerList;
 
 
@@ -58,14 +60,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
+        radiusView = (TextView) findViewById(R.id.text_view_id);
+       // radiusView.setText(defualtRadius);
         dbConnector = new DbConnector(this);
         markerList=new ArrayList<>();
-        /*try {
-            dbConnector.copyDatabaseFromAssets();
+        try {
+            dbConnector.checkDatabaseExistence();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
         //initialize login screen
         loginScene();
     }
@@ -164,7 +167,25 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         }
     }
+   public void increaseRadius(android.view.View view){
+        if (defualtRadius<200){
+            defualtRadius+=5;
+            TextView textView = (TextView)findViewById(R.id.text_view_id);
+            textView.setText(String.valueOf(defualtRadius));
+        } else{
+            showToast("max radius");
+        }
+    }
+   public void decreaseRadius(android.view.View view){
+       if (defualtRadius>5){
+           defualtRadius-=5;
+           TextView textView = (TextView)findViewById(R.id.text_view_id);
+           textView.setText(String.valueOf(defualtRadius));
+       } else{
+           showToast("min radius");
 
+       }
+    }
     private void showToast(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
@@ -180,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                             LatLng currentLatLng = new LatLng(lat, lng);
 
                             // Move the camera to the user's current location and zoom in
-                            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12));
+                            gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 14));
                             placeStationsOnMap(dbConnector.getStations(lng,lat, defualtRadius));
                         } else {
                             // Handle the case where location is null
@@ -224,16 +245,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String charger_type = cursor.getString(0);
+        if(charger_type.equals("")) charger_type = "n/a";
 
         query = "SELECT connection_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
         cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String connection_type = cursor.getString(0);
+        if(connection_type.equals("")) charger_type = "n/a";
 
         query = "SELECT wattage FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
         cursor = db.rawQuery(query, null);
         cursor.moveToNext();
         String wattage_query = cursor.getString(0);
+        if(wattage_query.equals("")) wattage_query = "n/a";
+        else wattage_query += " kW";
+
 
         TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
         chargerType.setText(charger_type);
@@ -259,6 +285,18 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         // Applying updated parameters to the button
         zoomButton.setLayoutParams(buttonParams);
 
+        //Changing position of radius counter.
+        TextView radiusTextView = findViewById(R.id.text_view_id);
+        RelativeLayout.LayoutParams textViewParams = (RelativeLayout.LayoutParams) radiusTextView.getLayoutParams();
+
+        // Update the TextView's position to be under the button
+        textViewParams.addRule(RelativeLayout.BELOW, R.id.zoom_button);
+        textViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        textViewParams.addRule(RelativeLayout.ABOVE, 0);
+        textViewParams.setMargins(0, 16, 0, 16); // Adjust top and bottom margins as needed
+
+        // Applying updated parameters to the TextView
+        radiusTextView.setLayoutParams(textViewParams);
         //setting list visible
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
