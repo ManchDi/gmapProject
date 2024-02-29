@@ -1,9 +1,9 @@
 package com.capstone.gmapproject;
 
 public class HistoryEntry {
-    private String address = "";
-    private String type = "";
-    private String charger = "";
+    public String address = "";
+    public String type = "";
+    public String charger = "";
     private double cost;
     private double time;
 

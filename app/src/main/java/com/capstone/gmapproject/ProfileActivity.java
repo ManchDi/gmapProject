@@ -43,8 +43,28 @@ public class ProfileActivity extends AppCompatActivity {
             }
         });
 
-        username_box = (TextView) findViewById(R.id.username_box);
-        username_box.setText(username);
+        if(!history.isEmpty()){
+            for(int i = 1; i <= history.size(); i++){
+
+                TextView entry = new TextView(this);
+                if(i==1){entry = (TextView)findViewById(R.id.h1);}
+                if(i==2){entry = (TextView)findViewById(R.id.h2);}
+                if(i==3){entry = (TextView)findViewById(R.id.h3);}
+                if(i==4){entry = (TextView)findViewById(R.id.h4);}
+                if(i==5){entry = (TextView)findViewById(R.id.h5);}
+                String text = "Entry " + i +
+                        "\nAddress: " + history.peek().address +
+                        "\nType: " + history.peek().type +
+                        "\nCharger: " + history.peek().charger +
+                        "\nCost: \nTime: ";
+                entry.setText(text);
+                history.add(history.remove());
+            }
+        }
+
+        //cursor = chargeChartsDB.rawQuery("SELECT username FROM user_cred WHERE user_id = " + ID);
+        //username_box = (TextView) findViewById(R.id.username_box);
+        //username_box.setText(cursor.getString(0));
 
 
     }
