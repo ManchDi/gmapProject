@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private DbConnector dbConnector;
     private SQLiteDatabase db;
     private static int userID;
+    private static boolean loggedIn;
     private int defualtRadius=6;
     private TextView radiusView;
     List<Marker> markerList;
@@ -71,8 +72,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        //initialize login screen
-        loginScene();
+        //Check which screen to go to, if there is a userID stored from when someone logged in, go to map, otherwise to go login
+        if(!loggedIn)
+        {
+            Intent i = new Intent(this, LoginActivity.class);
+            startActivity(i);
+        }
+        else
+        {
+            mapLayout();
+        }
+
     }
 
     //function to switch layout to the map after login is authenticated
@@ -312,215 +322,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
     }
 
-    //method to check if accurate username and password were given, returns true if so, false if not
-    private boolean authenticateLogin()
+    public static void setUserID(int userID)
     {
-        db = dbConnector.getReadableDatabase();
-        //get the username and password from their respective text fields
-        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
-        String username = usernameText.getText().toString();
-
-        EditText passwordText = (EditText) findViewById(R.id.password_text_input);
-        String password = passwordText.getText().toString();
-
-        //compare username to the usernames in the database to see if a match is present
-        String query = "SELECT * FROM user_info WHERE username = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-        if(!(cursor.getCount() > 0)) {
-            db.close();
-            return false;
-        }
-        cursor.close();
-
-        query = "SELECT user_id FROM user_info WHERE username = ?";
-        cursor = db.rawQuery(query, new String[]{username});
-        cursor.moveToFirst();
-        int tempUserID = cursor.getInt(0);
-        cursor.close();
-
-        //check password
-        query = "SELECT password FROM user_cred WHERE user_id = ?";
-        cursor = db.rawQuery(query, new String[]{String.valueOf(tempUserID)});
-       if(!(cursor.getCount() > 0))
-       {
-           db.close();
-           return false;
-       }
-       cursor.moveToFirst();
-       String compare = cursor.getString(0);
-       if(!compare.equals(password))
-       {
-           db.close();
-           return false;
-       }
-
-       db.close();
-        return true;
+        MainActivity.userID = userID;
     }
 
-    //set the static user ID variable to the logged in user's ID, for future use.
-    private void setUserID() {
-        String query = "SELECT user_id FROM user_info WHERE username = ?";
-
-        db = dbConnector.getReadableDatabase();
-
-        EditText usernameText = (EditText) findViewById(R.id.username_text_input);
-        String username = usernameText.getText().toString();
-
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-        cursor.moveToFirst();
-        userID = cursor.getInt(0);
-        cursor.close();
-        db.close();
-
-    }
-
-    private void createAccountScene()
+    public static void setLoggedIn(boolean status)
     {
-        setContentView(R.layout.create_account_screen);
-        Button back = (Button) findViewById(R.id.btnBack);
-
-        back.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //back to login screen
-                loginScene();
-            }
-        });
-
-        Button createAccount = (Button) findViewById(R.id.btnCreate);
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                db = dbConnector.getReadableDatabase();
-                //first, check if that username is currently in use, then if not, create the account
-                EditText usernameText = (EditText) findViewById(R.id.createUsername_text_input);
-                String username = usernameText.getText().toString();
-
-                EditText passwordText = (EditText) findViewById(R.id.createPassword_text_input);
-                String password = passwordText.getText().toString();
-
-                boolean valid = createAccount(username, password);
-                if (valid == false) printCreationError();
-                else printConfirmCreation();
-
-                db.close();
-            }
-        });
-    }
-
-    private void loginScene()
-    {
-        setContentView(R.layout.login_screen);
-
-        //create buttons for login/create account and set up listeners
-        Button login = (Button) findViewById(R.id.btnLogin);
-        login.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                //throw to method for authenticating login
-                boolean valid = authenticateLogin();
-                if(!valid) {
-                    printFalseCredentials();
-                }
-                else{
-                    setUserID();
-                    mapLayout();
-                }
-            }
-        });
-
-        //transition to account creation page
-        Button createAccount = (Button) findViewById(R.id.btnCreate);
-        createAccount.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                createAccountScene();
-            }
-        });
-    }
-
-    private boolean createAccount(String username, String password)
-    {
-        db = dbConnector.getWritableDatabase();
-
-        //query database to see if same username exists
-        String query = "SELECT * FROM user_info WHERE username = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{username});
-        int error = cursor.getCount();
-        cursor.close();
-        //if it exists, they cannot create that account
-        if(error > 0)
-        {
-            db.close();
-            return false;
-        }
-        //if not, make the new account
-        else
-        {
-
-            ContentValues usernameValues = new ContentValues();
-            usernameValues.put("username", username);
-
-
-            long result;
-
-            result = db.insert("user_info", null, usernameValues);
-            if(result == -1) printConfirmError();
-
-            ContentValues passwordValues = new ContentValues();
-            passwordValues.put("password", password);
-            result = db.insert("user_cred", null, passwordValues);
-            db.close();
-
-            if(result == -1) return false;
-            else return true;
-        }
-
-    }
-
-    private void printCreationError()
-    {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setTitle("Invalid Credentials");
-        alertDialogBuilder.setMessage("This username already exists, try again.");
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-    }
-
-    private void printConfirmCreation()
-    {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setTitle("Account Created");
-        alertDialogBuilder.setMessage("You have successfully created an account, please go back to the main menu and log in.");
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-    }
-
-    private void printConfirmError()
-    {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setTitle("Account Not Created");
-        alertDialogBuilder.setMessage("There was an error creating your account, please try again.");
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-    }
-
-    private void printFalseCredentials()
-    {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder.setTitle("Incorrect Login Credentials");
-        alertDialogBuilder.setMessage("Your username or password was incorrect, please try again.");
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-
-        alertDialog.show();
-
+        loggedIn = status;
     }
 }

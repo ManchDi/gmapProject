@@ -102,6 +102,7 @@
         android:layout_marginStart="2dp"
         android:layout_marginBottom="84dp"
         android:text="@string/go_back"
+        android:backgroundTint="@color/darkBlue"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

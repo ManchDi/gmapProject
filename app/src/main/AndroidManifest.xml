@@ -36,6 +36,24 @@
                 <category android:name="android.intent.category.HISTORY" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.LOGIN" />
+
+                <category android:name="android.intent.category.ACCOUNT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".CreateActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.CREATE" />
+
+                <category android:name="android.intent.category.ACCOUNT" />
+            </intent-filter>
+        </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBSyHraTa1Go0UG9L-3zPqLmED0A0MlR-I"/>
