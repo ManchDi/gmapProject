@@ -18,6 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class ProfileActivity extends AppCompatActivity {
@@ -42,7 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
                 startActivity(new Intent(ProfileActivity.this, MainActivity.class));
             }
         });
-
+        history=new LinkedList<>();
         if(!history.isEmpty()){
             for(int i = 1; i <= history.size(); i++){
 
@@ -75,7 +76,7 @@ public class ProfileActivity extends AppCompatActivity {
             history.remove();
         }
     }
-
+//Params: ID: station ID
     private void getEntry(int ID){
         ArrayList<String> entries =dbConnector.getHistoryDatum(ID);
         if (entries.size() >= 3) {

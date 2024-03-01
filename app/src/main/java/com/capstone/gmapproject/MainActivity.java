@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         radiusView = (TextView) findViewById(R.id.text_view_id);
        // radiusView.setText(defualtRadius);
         dbConnector = new DbConnector(this);
@@ -81,6 +80,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         else
         {
             mapLayout();
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // Request location permission
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_LOCATION_PERMISSION);
+            }
+            fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         }
 
     }
@@ -92,17 +98,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
          SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
          mapFragment.getMapAsync(this);
          View windowLayout = findViewById(R.id.window_layout);
-         /*
-         Cursor cursor = getAllChargerLocations();
 
-         // Display data using Toast
-         displayChargerLocations(cursor);
-
-         // Don't forget to close the cursor when done
-         if (cursor != null) {
-         cursor.close();
-         }
-          */
     }
 
     @Override
@@ -122,10 +118,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
-        } else {
-            // Permission is already granted
-            zoomToCurrentLocation();
         }
+        zoomToCurrentLocation();
         gMap.setOnMarkerClickListener(marker -> {
             // Show the white window
             if(marker.getTag()!=null){
@@ -321,7 +315,40 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         windowLayout.setVisibility(View.VISIBLE);
         Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
     }
+    public void closeWindow(View view){
+        //creating reference to the map, pulling params, changing the height
+        SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
+        ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        mapFragment.getView().setLayoutParams(params);
 
+        Button zoomButton = findViewById(R.id.zoom_button);
+        RelativeLayout.LayoutParams buttonParams = (RelativeLayout.LayoutParams) zoomButton.getLayoutParams();
+
+        // Updating the button's position to stay on the new map size
+        buttonParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, 1);
+        buttonParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        buttonParams.setMargins(0, 16, 0, 16); // Adjust top and bottom margins as needed
+
+        // Applying updated parameters to the button
+        zoomButton.setLayoutParams(buttonParams);
+
+        //Changing position of radius counter.
+        TextView radiusTextView = findViewById(R.id.text_view_id);
+        RelativeLayout.LayoutParams textViewParams = (RelativeLayout.LayoutParams) radiusTextView.getLayoutParams();
+
+        // Update the TextView's position to be under the button
+        textViewParams.addRule(RelativeLayout.ABOVE, R.id.zoom_button);
+        textViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+        textViewParams.addRule(RelativeLayout.BELOW, 0);
+        textViewParams.setMargins(0, 16, 0, 16); // Adjust top and bottom margins as needed
+
+        // Applying updated parameters to the TextView
+        radiusTextView.setLayoutParams(textViewParams);
+        //setting list visible
+        View windowLayout = findViewById(R.id.window_layout);
+        windowLayout.setVisibility(View.INVISIBLE);
+    }
     public static void setUserID(int userID)
     {
         MainActivity.userID = userID;
@@ -331,4 +358,5 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         loggedIn = status;
     }
+
 }
