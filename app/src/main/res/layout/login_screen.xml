@@ -72,7 +72,7 @@
         android:layout_marginTop="18dp"
         android:layout_marginEnd="116dp"
         android:inputType="text"
-        android:text="test"
+        android:hint="Username"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username_textView" />
@@ -99,7 +99,7 @@
         android:layout_marginBottom="24dp"
         android:ems="10"
         android:inputType="textPassword"
-        android:text="1234"
+        android:hint="Password"
         app:layout_constraintBottom_toTopOf="@+id/btnLogin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

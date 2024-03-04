@@ -7,15 +7,14 @@
     android:textAlignment="center"
     tools:context=".ProfileActivity">
 
-    <EditText
-        android:id="@+id/username_box"
+    <TextView
+        android:id="@+id/txt_username"
         android:layout_width="209dp"
         android:layout_height="74dp"
-        android:layout_marginTop="36dp"
-        android:ems="10"
-        android:hint="@string/username"
-        android:inputType="text"
-        android:textColor="#000000"
+        android:text="Username"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -29,9 +28,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_box"
-        app:layout_constraintVertical_bias="0.265">
+        app:layout_constraintStart_toStartOf="parent">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -43,6 +40,32 @@
                 android:layout_height="wrap_content"
                 android:text="@string/entry_1"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/h1Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/h1Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/h1Button"
+                android:backgroundTint="@color/darkBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginStart="300dp"
+                android:text="Navigate"
+                android:visibility="gone"/>
 
         </androidx.cardview.widget.CardView>
 
@@ -56,6 +79,33 @@
                 android:layout_height="wrap_content"
                 android:text="@string/entry_2"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/h2Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/h2Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/h2Button"
+                android:backgroundTint="@color/darkBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginStart="300dp"
+                android:text="Navigate"
+                android:visibility="gone"/>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -68,6 +118,33 @@
                 android:layout_height="wrap_content"
                 android:text="@string/entry_3"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/h3Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/h3Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/h3Button"
+                android:backgroundTint="@color/darkBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginStart="300dp"
+                android:text="Navigate"
+                android:visibility="gone"/>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -80,6 +157,33 @@
                 android:layout_height="wrap_content"
                 android:text="@string/entry_4"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/h4Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/h4Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/h4Button"
+                android:backgroundTint="@color/darkBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginStart="300dp"
+                android:text="Navigate"
+                android:visibility="gone"/>
+
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
@@ -92,6 +196,33 @@
                 android:layout_height="wrap_content"
                 android:text="@string/entry_5"
                 android:textAlignment="center" />
+
+            <TextView
+                android:id="@+id/h5Name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/h5Address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="60dp"
+                android:layout_marginStart="10dp"
+                android:text="" />
+
+            <Button
+                android:id="@+id/h5Button"
+                android:backgroundTint="@color/darkBlue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="75dp"
+                android:layout_marginStart="300dp"
+                android:text="Navigate"
+                android:visibility="gone"/>
+
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
@@ -101,13 +232,23 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="2dp"
         android:layout_marginBottom="84dp"
-        android:text="@string/go_back"
         android:backgroundTint="@color/darkBlue"
+        android:text="@string/go_back"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/txt_username"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/username_box"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/logout_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/darkBlue"
+        android:text="Logout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/txt_username"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

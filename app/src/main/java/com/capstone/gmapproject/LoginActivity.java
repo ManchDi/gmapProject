@@ -64,6 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                 } //if they were, log in
                 else{
                     setUserID();
+                    MainActivity.setUsername(username);
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 }
             }
@@ -76,8 +77,7 @@ public class LoginActivity extends AppCompatActivity {
         db = dbConnect.getReadableDatabase();
         //get the username and password from their respective text fields
         EditText usernameText = (EditText) findViewById(R.id.username_text_input);
-        String username = usernameText.getText().toString();
-        this.username = username;
+        username = usernameText.getText().toString();
 
         EditText passwordText = (EditText) findViewById(R.id.password_text_input);
         String password = passwordText.getText().toString();
@@ -124,7 +124,7 @@ public class LoginActivity extends AppCompatActivity {
         db = dbConnect.getReadableDatabase();
 
         EditText usernameText = (EditText) findViewById(R.id.username_text_input);
-        String username = usernameText.getText().toString();
+        username = usernameText.getText().toString();
 
         Cursor cursor = db.rawQuery(query, new String[]{username});
         cursor.moveToFirst();

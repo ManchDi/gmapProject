@@ -20,73 +20,47 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/username_textView"
-        android:layout_width="71dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="296dp"
-        android:layout_marginBottom="26dp"
-        android:text="Username:"
-        app:layout_constraintBottom_toTopOf="@+id/createUsername_text_input"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtCreateAccount" />
-
     <EditText
         android:id="@+id/createUsername_text_input"
         android:layout_width="348dp"
         android:layout_height="48dp"
         android:layout_marginStart="44dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginBottom="43dp"
+        android:layout_marginEnd="30dp"
+        android:hint="Username"
         android:inputType="text"
-        android:text="Username"
-        app:layout_constraintBottom_toTopOf="@+id/password_textView"
+        app:layout_constraintBottom_toTopOf="@+id/createPassword_text_input"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_textView" />
-
-    <TextView
-        android:id="@+id/password_textView"
-        android:layout_width="72dp"
-        android:layout_height="17dp"
-        android:layout_marginStart="44dp"
-        android:layout_marginTop="30dp"
-        android:layout_marginEnd="295dp"
-        android:text="Password:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/createUsername_text_input" />
+        app:layout_constraintTop_toBottomOf="@+id/txtCreateAccount"
+        app:layout_constraintVertical_bias="0.287" />
 
     <EditText
         android:id="@+id/createPassword_text_input"
         android:layout_width="348dp"
         android:layout_height="48dp"
         android:layout_marginStart="44dp"
-        android:layout_marginTop="13dp"
-        android:layout_marginEnd="19dp"
-        android:layout_marginBottom="106dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="164dp"
+        android:hint="Password"
         android:inputType="text"
-        android:text="Password"
         app:layout_constraintBottom_toTopOf="@+id/btnCreate"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_textView" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtCreateAccount"
-        android:layout_width="326dp"
+        android:layout_width="348dp"
         android:layout_height="134dp"
         android:layout_marginStart="34dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="51dp"
         android:text="Create Your Account:"
+        android:textAlignment="center"
         android:textSize="34dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.136"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnBack" />
 

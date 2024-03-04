@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SQLiteDatabase db;
     private static int userID;
     private static boolean loggedIn;
+    private static String username;
     private int defualtRadius=6;
     private TextView radiusView;
     List<Marker> markerList;
@@ -357,6 +358,21 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public static void setLoggedIn(boolean status)
     {
         loggedIn = status;
+    }
+
+    public static void setUsername(String user)
+    {
+        username = user;
+    }
+
+    public static int getUserID()
+    {
+        return userID;
+    }
+
+    public static String getUsername()
+    {
+        return username;
     }
 
 }
