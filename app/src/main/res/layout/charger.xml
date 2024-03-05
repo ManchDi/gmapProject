@@ -1,0 +1,37 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/charger_background"
+    android:padding="16dp"
+    android:layout_margin="8dp"
+    android:elevation="15dp">
+
+    <!-- Charger Type TextView -->
+    <TextView
+        android:id="@+id/txtShowChargerType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="Charger Type: Unknown"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Connection Type TextView -->
+    <TextView
+        android:id="@+id/txtShowConnectionType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Connection Type: Unknown"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- Wattage TextView -->
+    <TextView
+        android:id="@+id/txtShowWattage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Wattage: Unknown" />
+
+</LinearLayout>

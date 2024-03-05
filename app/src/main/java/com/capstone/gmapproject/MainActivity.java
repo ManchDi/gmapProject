@@ -13,6 +13,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -58,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private int defualtRadius=6;
     private TextView radiusView;
     List<Marker> markerList;
+    List<Charger> chargerList;
 
 
     @Override
@@ -67,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
        // radiusView.setText(defualtRadius);
         dbConnector = new DbConnector(this);
         markerList=new ArrayList<>();
+        chargerList=new ArrayList<>();
         try {
             dbConnector.checkDatabaseExistence();
         } catch (IOException e) {
@@ -250,11 +255,22 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {
         db = dbConnector.getReadableDatabase();
-
+        String newID = id.toString();
+        chargerList=dbConnector.getChargers(newID);
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_chargers);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        ListViewer adapter= new ListViewer(chargerList, new ListViewer.OnItemClickListener() {
+            @Override
+            public void onItemClick(Charger charger) {
+                // Handle item click (e.g., open detailed view of the charger)
+                Log.d("dbConnector", "opened charger");
+            }
+        });
+        recyclerView.setAdapter(adapter);
         //Based on the ID given, pull the charger_type, connection_type, and wattage of that charger, just pull the first one possible
         //First index is charger type, second connection type, third wattage
-        String newID = id.toString();
 
+        /*
         String query = "SELECT charger_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
         Cursor cursor = db.rawQuery(query, null);
         cursor.moveToNext();
@@ -281,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         connectionType.setText(connection_type);
         TextView wattage = (TextView) findViewById(R.id.txtShowWattage);
         wattage.setText(wattage_query);
-
+        */
         //creating reference to the map, pulling params, changing the height
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
@@ -303,13 +319,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         TextView radiusTextView = findViewById(R.id.text_view_id);
         RelativeLayout.LayoutParams textViewParams = (RelativeLayout.LayoutParams) radiusTextView.getLayoutParams();
 
-        // Update the TextView's position to be under the button
+        // Update the Radius position to be under the button
         textViewParams.addRule(RelativeLayout.BELOW, R.id.zoom_button);
         textViewParams.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
         textViewParams.addRule(RelativeLayout.ABOVE, 0);
         textViewParams.setMargins(0, 16, 0, 16); // Adjust top and bottom margins as needed
 
-        // Applying updated parameters to the TextView
+        // Applying updated parameters to the Radius
         radiusTextView.setLayoutParams(textViewParams);
         //setting list visible
         View windowLayout = findViewById(R.id.window_layout);

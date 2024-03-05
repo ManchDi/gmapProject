@@ -37,6 +37,7 @@ public class DbConnector extends SQLiteOpenHelper {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
             checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
             Log.d("dbHelper", "db exists");
+            listAllEntriesOfTable("chargers");
         } catch (SQLException e) {
             // Database does not exist, create it
             Log.d("dbHelper", "db doesnt exist, going to create");
@@ -177,6 +178,39 @@ public class DbConnector extends SQLiteOpenHelper {
             station.printStation();
         }
         return stationList;
+    }
+    @SuppressLint("Range")
+    public List<Charger> getChargers(String ch_id) {
+
+        List<Charger> chargerList = new ArrayList<>();
+
+        // Query to fetch stations within the square area
+        String query = "SELECT * FROM chargers " +
+                "WHERE st_id = '"+ch_id+"'";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        // Iterate through the cursor and add stations to the list
+        if (cursor != null && cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                Charger charger = new Charger();
+                charger.setId(cursor.getInt(cursor.getColumnIndex("st_id")));
+                charger.setStationId(cursor.getInt(cursor.getColumnIndex("st_id")));
+                charger.setChargerType(cursor.getString(cursor.getColumnIndex("charger_type")));
+                charger.setPrice(cursor.getString(cursor.getColumnIndex("price")));
+                charger.setConnectionType(cursor.getString(cursor.getColumnIndex("connection_type")));
+                charger.setWattage(cursor.getString(cursor.getColumnIndex("wattage")));
+                chargerList.add(charger);
+                cursor.moveToNext();
+            }
+            cursor.close();
+        }
+        db.close();
+        for (Charger charger : chargerList) {
+            charger.print();
+        }
+        return chargerList;
     }
     public ArrayList<String> getHistoryDatum(int chId) {
         ArrayList<String> stationList = new ArrayList<>();
