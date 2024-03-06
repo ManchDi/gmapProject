@@ -12,6 +12,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -99,8 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     //function to switch layout to the map after login is authenticated
-    public void mapLayout()
-    {
+    public void mapLayout() {
         setContentView(R.layout.activity_main);
          SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
          mapFragment.getMapAsync(this);
@@ -256,8 +256,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     public void navigate(View view){
         dbConnector.addHistoryDatum(currentStationID,getUserID());
-
-
+        String address = "http://maps.google.co.in/maps?q=" + dbConnector.getStationName(currentStationID).get(1);
+        Log.d("dbHelper","add: "+address);
+        Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+        startActivity(i);
     }
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {

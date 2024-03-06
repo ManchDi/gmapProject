@@ -46,7 +46,7 @@ public class HistoryViewer extends RecyclerView.Adapter<HistoryViewer.HistoryVie
         //translating charger params into view textfields.
         public void bind(HistoryEntry history) {
             txtName.setText(String.format("%s", history.getName()));
-            txtStreet.setText(String.format("Connection: %s", history.getAddress()));
+            txtStreet.setText(String.format("address: %s", history.getAddress()));
         }
     }
     @NonNull

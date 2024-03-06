@@ -20,9 +20,9 @@ import java.util.List;
 public class DbConnector extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "charge_charts_db.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private final Context context;
-
+    private boolean dbExists;
 
 
     public DbConnector(Context context)
@@ -37,8 +37,9 @@ public class DbConnector extends SQLiteOpenHelper {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
             checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
             Log.d("dbHelper", "db exists");
-            listAllEntriesOfTable("stations");
-            //listAllTables();
+            //listAllEntriesOfTable("stations");
+            listAllTables();
+
         } catch (SQLException e) {
             // Database does not exist, create it
             Log.d("dbHelper", "db doesnt exist, going to create");
@@ -94,7 +95,13 @@ public class DbConnector extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-
+        // If you need to add new columns or make other changes to the database schema,
+        // you can execute SQL statements here.
+        if (oldVersion < 2) {
+            // Add new columns to the history table
+            db.execSQL("ALTER TABLE history ADD COLUMN name TEXT");
+            db.execSQL("ALTER TABLE history ADD COLUMN address TEXT");
+        }
     }
     public void listAllTables() {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -103,11 +110,12 @@ public class DbConnector extends SQLiteOpenHelper {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 String tableName = cursor.getString(0);
-                Log.d("dbHelper", "Table name: " + tableName);
+                //Log.d("dbHelper", "Table name: " + tableName);
                 cursor.moveToNext();
             }
             cursor.close();
         }
+        //listAllEntriesOfTable("history");
         db.close();
     }
     @SuppressLint("Range")
@@ -190,9 +198,14 @@ public class DbConnector extends SQLiteOpenHelper {
     public void addHistoryDatum(int chId, int us_id) {
         ArrayList<String> stationList = new ArrayList<>();
         Cursor cursor;
+        String sqlAdd = "INSERT INTO history (user_id, station_id, name, address) VALUES (?, ?, ?, ?)";
+        Object[] bindArgs = new Object[4];
+        List<String> nameAdd= getStationName(chId);
+        bindArgs[0] = us_id;
+        bindArgs[1] = chId;
+        bindArgs[2] = nameAdd.get(0);
+        bindArgs[3] = nameAdd.get(1);
         SQLiteDatabase db = this.getReadableDatabase();
-        String sqlAdd = "INSERT INTO history (user_id, station_id) VALUES (?, ?)";
-        Object[] bindArgs = {us_id,chId};
         db.execSQL(sqlAdd, bindArgs);
         String sqlDelete = "DELETE FROM history WHERE user_id = ? AND history_id NOT IN (SELECT history_id FROM history WHERE user_id = ? ORDER BY history_id DESC LIMIT 5)";
         String[] deleteArgs = {String.valueOf(us_id), String.valueOf(us_id)};
@@ -204,49 +217,42 @@ public class DbConnector extends SQLiteOpenHelper {
     public List<HistoryEntry> getHistory(int us_id) {
         List<HistoryEntry> historyList = new ArrayList<>();
         String usID = String.valueOf(us_id);
-        String sql = "SELECT station_id FROM history " +
-                "WHERE user_id = '" + usID + "'";
+        String sql = "SELECT station_id, name, address FROM history " +
+                "WHERE user_id = '" + usID + "' ORDER BY history_id DESC";
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(sql, null);
 
-        // Iterate through the cursor and add chargers to the list
-        List<Integer> stIdsList = new ArrayList<>();
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
-                @SuppressLint("Range") int stId = cursor.getInt(cursor.getColumnIndex("station_id"));
-                stIdsList.add(stId);
+                HistoryEntry history = new HistoryEntry();
+                history.setName(cursor.getString(cursor.getColumnIndex("name")));
+                history.setAddress(cursor.getString(cursor.getColumnIndex("address")));
+                historyList.add(history);
                 cursor.moveToNext();
-                Log.d("dbHelper","\nstID: "+stId);
             }
             cursor.close();
         }
-        StringBuilder fetchStations = new StringBuilder("SELECT * FROM stations WHERE st_id IN (");
-        // Append ? for each st_id
-        for (int i = 0; i < stIdsList.size(); i++) {
-            fetchStations.append("?");
-            if (i < stIdsList.size() - 1) {
-                fetchStations.append(", ");
-            }
-        }
-        fetchStations.append(")");
-
-        String[] stationIds = new String[stIdsList.size()];
-        for (int i = 0; i < stIdsList.size(); i++) {
-            stationIds[i] = String.valueOf(stIdsList.get(i));
-        }
-
-        Cursor stationCursor = db.rawQuery(fetchStations.toString(), stationIds);
-        if (stationCursor != null && stationCursor.moveToFirst()) {
-            while (!stationCursor.isAfterLast()) {
-                HistoryEntry history = new HistoryEntry();
-                history.setName(stationCursor.getString(stationCursor.getColumnIndex("name")));
-                history.setAddress(stationCursor.getString(stationCursor.getColumnIndex("address")));
-                historyList.add(history);
-                stationCursor.moveToNext();
-            }
-            stationCursor.close();
-            db.close();
-        }
+        db.close();
         return historyList;
+    }
+    @SuppressLint("Range")
+    public List<String> getStationName(int st_id){
+        List<String> nameAdd= new ArrayList<>();
+        String sqlGetName = "SELECT name, address FROM stations WHERE st_id = ?";
+        String name = "";
+        String address = "";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sqlGetName, new String[]{String.valueOf(st_id)});
+
+        if (cursor != null && cursor.moveToFirst()) {
+            name = cursor.getString(cursor.getColumnIndex("name"));
+            address = cursor.getString(cursor.getColumnIndex("address"));
+            nameAdd.add(name);
+            nameAdd.add(address);
+            cursor.close();
+        }
+        db.close();
+        return nameAdd;
     }
 }
