@@ -57,8 +57,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SQLiteDatabase db;
     private static int userID;
     private static boolean loggedIn;
+    private boolean fullScreen=true;
     private static String username;
-    private int defualtRadius=6;
+    private int defualtRadius=6, currentStationID=0;
     private TextView radiusView;
     List<Marker> markerList;
     List<Charger> chargerList;
@@ -131,6 +132,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if(marker.getTag()!=null){
                 Integer clickCount = (Integer) marker.getTag();
                 showWhiteWindow(clickCount);
+                currentStationID=clickCount;
             } else {
                 showWhiteWindow(0);
             }
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
         gMap.setMyLocationEnabled(true);
     }
-    public void zoomInToCurrentLocation(android.view.View view) {
+    public void refresh(android.view.View view) {
         // Check location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED
@@ -252,53 +254,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
     }
+    public void navigate(View view){
+        dbConnector.addHistoryDatum(currentStationID,getUserID());
+
+
+    }
     //Invokes after marker click
     private void showWhiteWindow(Integer id) {
-        db = dbConnector.getReadableDatabase();
-        String newID = id.toString();
-        chargerList=dbConnector.getChargers(newID);
-        RecyclerView recyclerView = findViewById(R.id.recycler_view_chargers);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ListViewer adapter= new ListViewer(chargerList, new ListViewer.OnItemClickListener() {
-            @Override
-            public void onItemClick(Charger charger) {
-                // Handle item click (e.g., open detailed view of the charger)
+
+            db = dbConnector.getReadableDatabase();
+            String newID = id.toString();
+            chargerList = dbConnector.getChargers(newID);
+            RecyclerView recyclerView = findViewById(R.id.recycler_view_chargers);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            ListViewer adapter = new ListViewer(chargerList, charger -> {
+                // Item click
                 Log.d("dbConnector", "opened charger");
-            }
-        });
-        recyclerView.setAdapter(adapter);
-        //Based on the ID given, pull the charger_type, connection_type, and wattage of that charger, just pull the first one possible
-        //First index is charger type, second connection type, third wattage
-
-        /*
-        String query = "SELECT charger_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
-        Cursor cursor = db.rawQuery(query, null);
-        cursor.moveToNext();
-        String charger_type = cursor.getString(0);
-        if(charger_type.equals("")) charger_type = "n/a";
-
-        query = "SELECT connection_type FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
-        cursor = db.rawQuery(query, null);
-        cursor.moveToNext();
-        String connection_type = cursor.getString(0);
-        if(connection_type.equals("")) charger_type = "n/a";
-
-        query = "SELECT wattage FROM chargers WHERE st_id = '" + newID + "' ORDER BY ch_id LIMIT 1";
-        cursor = db.rawQuery(query, null);
-        cursor.moveToNext();
-        String wattage_query = cursor.getString(0);
-        if(wattage_query.equals("")) wattage_query = "n/a";
-        else wattage_query += " kW";
+            });
+            recyclerView.setAdapter(adapter);
 
 
-        TextView chargerType = (TextView) findViewById(R.id.txtShowChargerType);
-        chargerType.setText(charger_type);
-        TextView connectionType = (TextView) findViewById(R.id.txtShowConnectionType);
-        connectionType.setText(connection_type);
-        TextView wattage = (TextView) findViewById(R.id.txtShowWattage);
-        wattage.setText(wattage_query);
-        */
         //creating reference to the map, pulling params, changing the height
+        if(fullScreen) {
         SupportMapFragment mapFragment=(SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
         ViewGroup.LayoutParams params = mapFragment.getView().getLayoutParams();
         params.height = 1000;
@@ -330,6 +307,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //setting list visible
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
+        }
         Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
     }
     public void closeWindow(View view){
@@ -365,6 +343,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         //setting list visible
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.INVISIBLE);
+        fullScreen=true;
     }
     public static void setUserID(int userID)
     {

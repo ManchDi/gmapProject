@@ -20,7 +20,7 @@ public class ListViewer extends RecyclerView.Adapter<ListViewer.ChargerViewHolde
         this.listener = listener;
     }
 
-    // Define interface for item click listener
+    //Interface for item click listener
     public interface OnItemClickListener {
         void onItemClick(Charger charger);
     }
@@ -29,11 +29,14 @@ public class ListViewer extends RecyclerView.Adapter<ListViewer.ChargerViewHolde
         private TextView connectionTypeTextView;
         private TextView wattageTextView;
 
+        //actual placeholder for charger object
         public ChargerViewHolder(@NonNull View itemView) {
             super(itemView);
             chargerTypeTextView = itemView.findViewById(R.id.txtShowChargerType);
             connectionTypeTextView = itemView.findViewById(R.id.txtShowConnectionType);
             wattageTextView = itemView.findViewById(R.id.txtShowWattage);
+
+            //click listener for charger block
             itemView.setOnClickListener(v -> {
                 int position = getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION) {
@@ -42,7 +45,7 @@ public class ListViewer extends RecyclerView.Adapter<ListViewer.ChargerViewHolde
             });
         }
 
-
+        //translating charger params into view textfields.
         public void bind(Charger charger) {
             chargerTypeTextView.setText(String.format("%s", charger.getChargerType()));
             connectionTypeTextView.setText(String.format("Connection: %s", charger.getConnectionType()));

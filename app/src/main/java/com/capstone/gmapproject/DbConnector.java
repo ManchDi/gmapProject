@@ -37,7 +37,8 @@ public class DbConnector extends SQLiteOpenHelper {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
             checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
             Log.d("dbHelper", "db exists");
-            listAllEntriesOfTable("chargers");
+            listAllEntriesOfTable("history");
+            //listAllTables();
         } catch (SQLException e) {
             // Database does not exist, create it
             Log.d("dbHelper", "db doesnt exist, going to create");
@@ -85,33 +86,7 @@ public class DbConnector extends SQLiteOpenHelper {
         }
         db.close();
     }
-    public long addUser(String username, String password) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery("SELECT user_id FROM user_info WHERE username = ?", new String[]{username});
-        if (cursor != null && cursor.moveToFirst()) {
-            @SuppressLint("Range") long userId = cursor.getLong(cursor.getColumnIndex("user_id"));
-            cursor.close();
-            db.close();
-            Log.d("dbHelper", "user already exists");
 
-            return userId; // User already exists, return the existing user ID
-        }
-        ContentValues valuesUserInfo = new ContentValues();
-        valuesUserInfo.put("username", username);
-        Log.d("dbHelper", "updated user_info with" + valuesUserInfo);
-
-        long userId = db.insert("user_info", null, valuesUserInfo);
-
-        ContentValues valuesUserCred = new ContentValues();
-        valuesUserCred.put("user_id", userId);
-        valuesUserCred.put("password", password);
-        Log.d("dbHelper", "updated user_cred");
-
-        db.insert("user_cred", null, valuesUserCred);
-
-        db.close();
-        return userId;
-    }
     @Override
     public void onCreate(SQLiteDatabase db) {
 
@@ -174,9 +149,9 @@ public class DbConnector extends SQLiteOpenHelper {
             cursor.close();
         }
         db.close();
-        for (Station station : stationList) {
+       /* for (Station station : stationList) {
             station.printStation();
-        }
+        }*/
         return stationList;
     }
     @SuppressLint("Range")
@@ -191,7 +166,7 @@ public class DbConnector extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery(query, null);
 
-        // Iterate through the cursor and add stations to the list
+        // Iterate through the cursor and add chargers to the list
         if (cursor != null && cursor.moveToFirst()) {
             while (!cursor.isAfterLast()) {
                 Charger charger = new Charger();
@@ -212,32 +187,17 @@ public class DbConnector extends SQLiteOpenHelper {
         }
         return chargerList;
     }
-    public ArrayList<String> getHistoryDatum(int chId) {
+    public void addHistoryDatum(int chId, int us_id) {
         ArrayList<String> stationList = new ArrayList<>();
         Cursor cursor;
         SQLiteDatabase db = this.getReadableDatabase();
-        cursor = db.rawQuery("SELECT st_id FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
-        if (cursor.moveToFirst()) {
-            String address = cursor.getString(0);
-            stationList.add(address);
-        }
-        cursor.close();
-
-        // Query for charger type
-        cursor = db.rawQuery("SELECT charger_type FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
-        if (cursor.moveToFirst()) {
-            String type = cursor.getString(0);
-            stationList.add(type);
-        }
-        cursor.close();
-
-        // Query for connection type
-        cursor = db.rawQuery("SELECT connection_type FROM chargers WHERE ch_id = ?", new String[]{String.valueOf(chId)});
-        if (cursor.moveToFirst()) {
-            String charger = cursor.getString(0);
-            stationList.add(charger);
-        }
-        cursor.close();
-        return stationList;
+        String sqlAdd = "INSERT INTO history (user_id, station_id) VALUES (?, ?)";
+        Object[] bindArgs = {us_id,chId};
+        db.execSQL(sqlAdd, bindArgs);
+        String sqlDelete = "DELETE FROM history WHERE user_id = ? AND history_id NOT IN (SELECT history_id FROM history WHERE user_id = ? ORDER BY history_id DESC LIMIT 5)";
+        String[] deleteArgs = {String.valueOf(us_id), String.valueOf(us_id)};
+        db.execSQL(sqlDelete, deleteArgs);
+        //listAllEntriesOfTable("history");
+        db.close();
     }
 }

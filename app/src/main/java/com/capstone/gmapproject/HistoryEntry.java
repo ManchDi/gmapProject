@@ -6,7 +6,9 @@ public class HistoryEntry {
     public String charger = "";
     private double cost;
     private double time;
+    public HistoryEntry(){
 
+    }
     public HistoryEntry(String a, String t, String c){
         setAddress(a);
         setType(t);

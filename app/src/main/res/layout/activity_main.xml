@@ -8,19 +8,21 @@
     tools:context=".MainActivity"
     tools:ignore="ExtraText">
 
-    <!-- Window Element -->
+    <!-- Map Element -->
 
     <fragment
         android:id="@+id/id_map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <!-- -refresh button -->
     <Button
         android:id="@+id/zoom_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Refresh"
-        android:onClick="zoomInToCurrentLocation"
+        android:onClick="refresh"
         android:backgroundTint="@color/darkBlue"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
@@ -61,7 +63,9 @@
         android:onClick="decreaseRadius"
         android:background="@android:color/white"
         android:src="@android:drawable/ic_delete" />
+    <!-- - Profile Button -->
     <ImageButton
+
         android:id="@+id/prof"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,6 +74,8 @@
         android:layout_marginStart="16dp"
         android:background="@android:color/white"
         android:src="@drawable/profile_icon" />
+
+    <!-- - List placeholder -->
     <RelativeLayout
         android:id="@+id/window_layout"
         android:layout_width="match_parent"
@@ -79,27 +85,37 @@
         android:layout_marginTop="-1dp"
         android:background="@color/white"
         android:visibility="gone">
-        <!--android:layout_below="@id/map_fragment"-->
-        <!-- Add your content for the window here -->
 
+        <!-- - chargers list -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view_chargers"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
-            android:layout_above="@+id/buttonCloseWindow"
+            android:layout_above="@+id/navigateButton"
             android:layout_below="@id/id_map"
             tools:ignore="NotSibling" />
+
+        <!-- hide window button -->
         <ImageButton
             android:id="@+id/buttonCloseWindow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
+            android:layout_alignParentTop="true"
+            android:onClick="closeWindow"
+            android:background="@android:color/transparent"
+            android:src="@android:drawable/ic_delete" />
+        <Button
+            android:id="@+id/navigateButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="16dp"
-            android:onClick="closeWindow"
-            android:background="@android:color/white"
-            android:src="@android:drawable/ic_delete" />
+            android:text="navigate"
+            android:onClick="navigate"
+            android:backgroundTint="@color/darkBlue"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
 </RelativeLayout>
