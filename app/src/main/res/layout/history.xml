@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/charger_background"
+    android:padding="16dp"
+    android:layout_margin="8dp"
+    android:elevation="15dp">
+
+    <!-- name TextView -->
+    <TextView
+        android:id="@+id/txtName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:text="@string/station_name_unknown"
+        android:layout_marginBottom="4dp"/>
+
+    <!-- street TextView -->
+    <TextView
+        android:id="@+id/txtStreet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="@string/street_is_unknown"
+        android:layout_marginBottom="4dp"/>
+
+</LinearLayout>

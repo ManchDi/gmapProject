@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,248 +8,55 @@
     android:textAlignment="center"
     tools:context=".ProfileActivity">
 
-    <TextView
-        android:id="@+id/txt_username"
-        android:layout_width="209dp"
-        android:layout_height="74dp"
-        android:text="Username"
-        android:textAlignment="center"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="410dp"
-        android:layout_height="621dp"
-        android:isScrollContainer="true"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="124dp">
-
-            <TextView
-                android:id="@+id/h1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/entry_1"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/h1Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <TextView
-                android:id="@+id/h1Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <Button
-                android:id="@+id/h1Button"
-                android:backgroundTint="@color/darkBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginStart="300dp"
-                android:text="Navigate"
-                android:visibility="gone"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="124dp">
-
-            <TextView
-                android:id="@+id/h2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/entry_2"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/h2Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <TextView
-                android:id="@+id/h2Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <Button
-                android:id="@+id/h2Button"
-                android:backgroundTint="@color/darkBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginStart="300dp"
-                android:text="Navigate"
-                android:visibility="gone"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="124dp">
-
-            <TextView
-                android:id="@+id/h3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/entry_3"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/h3Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <TextView
-                android:id="@+id/h3Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <Button
-                android:id="@+id/h3Button"
-                android:backgroundTint="@color/darkBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginStart="300dp"
-                android:text="Navigate"
-                android:visibility="gone"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="124dp">
-
-            <TextView
-                android:id="@+id/h4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/entry_4"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/h4Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <TextView
-                android:id="@+id/h4Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <Button
-                android:id="@+id/h4Button"
-                android:backgroundTint="@color/darkBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginStart="300dp"
-                android:text="Navigate"
-                android:visibility="gone"/>
-
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="124dp">
-
-            <TextView
-                android:id="@+id/h5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/entry_5"
-                android:textAlignment="center" />
-
-            <TextView
-                android:id="@+id/h5Name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <TextView
-                android:id="@+id/h5Address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="60dp"
-                android:layout_marginStart="10dp"
-                android:text="" />
-
-            <Button
-                android:id="@+id/h5Button"
-                android:backgroundTint="@color/darkBlue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="75dp"
-                android:layout_marginStart="300dp"
-                android:text="Navigate"
-                android:visibility="gone"/>
-
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-
     <Button
         android:id="@+id/go_back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="2dp"
-        android:layout_marginBottom="84dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/darkBlue"
         android:text="@string/go_back"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toStartOf="@+id/txt_username"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/txt_username"
+        android:layout_width="0dp"
+        android:layout_height="74dp"
+        android:text="Username"
+        android:textAlignment="center"
+        android:textSize="30sp"
+        app:layout_constraintStart_toEndOf="@+id/go_back_button"
+        app:layout_constraintEnd_toStartOf="@+id/logout_button"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/logout_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:backgroundTint="@color/darkBlue"
         android:text="Logout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/txt_username"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <RelativeLayout
+        android:id="@+id/window_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_below="@+id/go_back_button"
+        android:background="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logout_button"
+        tools:ignore="MissingConstraints">
+
+        <!-- Chargers list -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_view_history"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            tools:ignore="NotSibling" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

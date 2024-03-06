@@ -1,27 +1,25 @@
 package com.capstone.gmapproject;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Queue;
 
 public class ProfileActivity extends AppCompatActivity {
 
     private Queue<HistoryEntry> history;
+    private List<HistoryEntry> historyNew;
     private DbConnector dbConnector;
     private Cursor cursor;
 
@@ -56,7 +54,17 @@ public class ProfileActivity extends AppCompatActivity {
         txtUsername.setText(MainActivity.getUsername());
 
         userID = MainActivity.getUserID();
-
+        Log.d("dbHelper","beforeHistory");
+        historyNew=dbConnector.getHistory(userID);
+        Log.d("dbHelper","gotHistory");
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_history);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        HistoryViewer adapter = new HistoryViewer(historyNew, history -> {
+            // Item click
+            Log.d("dbConnector", "tapped history");
+        });
+        recyclerView.setAdapter(adapter);
+        /*
 
         //build an array list to store the users history, pulls one type of information for each entry at a time
         int[] userHistory = new int[5];
@@ -259,7 +267,7 @@ public class ProfileActivity extends AppCompatActivity {
 
                 h5Button.setVisibility(View.VISIBLE);
             }
-        }
+        }*/
     }
 
     private void addEntry(HistoryEntry entry){

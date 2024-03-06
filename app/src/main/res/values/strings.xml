@@ -55,4 +55,6 @@
     <string name="entry_3">Entry 3</string>
     <string name="entry_2">Entry 2</string>
     <string name="username">username</string>
+    <string name="station_name_unknown">station name: Unknown</string>
+    <string name="street_is_unknown">street is: Unknown</string>
 </resources>

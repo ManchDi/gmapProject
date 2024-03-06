@@ -37,7 +37,7 @@ public class DbConnector extends SQLiteOpenHelper {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
             checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
             Log.d("dbHelper", "db exists");
-            listAllEntriesOfTable("history");
+            listAllEntriesOfTable("stations");
             //listAllTables();
         } catch (SQLException e) {
             // Database does not exist, create it
@@ -199,5 +199,54 @@ public class DbConnector extends SQLiteOpenHelper {
         db.execSQL(sqlDelete, deleteArgs);
         //listAllEntriesOfTable("history");
         db.close();
+    }
+    @SuppressLint("Range")
+    public List<HistoryEntry> getHistory(int us_id) {
+        List<HistoryEntry> historyList = new ArrayList<>();
+        String usID = String.valueOf(us_id);
+        String sql = "SELECT station_id FROM history " +
+                "WHERE user_id = '" + usID + "'";
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
+
+        // Iterate through the cursor and add chargers to the list
+        List<Integer> stIdsList = new ArrayList<>();
+        if (cursor != null && cursor.moveToFirst()) {
+            while (!cursor.isAfterLast()) {
+                @SuppressLint("Range") int stId = cursor.getInt(cursor.getColumnIndex("station_id"));
+                stIdsList.add(stId);
+                cursor.moveToNext();
+                Log.d("dbHelper","\nstID: "+stId);
+            }
+            cursor.close();
+        }
+        StringBuilder fetchStations = new StringBuilder("SELECT * FROM stations WHERE st_id IN (");
+        // Append ? for each st_id
+        for (int i = 0; i < stIdsList.size(); i++) {
+            fetchStations.append("?");
+            if (i < stIdsList.size() - 1) {
+                fetchStations.append(", ");
+            }
+        }
+        fetchStations.append(")");
+
+        String[] stationIds = new String[stIdsList.size()];
+        for (int i = 0; i < stIdsList.size(); i++) {
+            stationIds[i] = String.valueOf(stIdsList.get(i));
+        }
+
+        Cursor stationCursor = db.rawQuery(fetchStations.toString(), stationIds);
+        if (stationCursor != null && stationCursor.moveToFirst()) {
+            while (!stationCursor.isAfterLast()) {
+                HistoryEntry history = new HistoryEntry();
+                history.setName(stationCursor.getString(stationCursor.getColumnIndex("name")));
+                history.setAddress(stationCursor.getString(stationCursor.getColumnIndex("address")));
+                historyList.add(history);
+                stationCursor.moveToNext();
+            }
+            stationCursor.close();
+            db.close();
+        }
+        return historyList;
     }
 }
