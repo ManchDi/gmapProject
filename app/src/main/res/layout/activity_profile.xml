@@ -15,6 +15,7 @@
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/darkBlue"
         android:text="@string/go_back"
+        android:textColor="@color/white"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -36,6 +37,7 @@
         android:layout_marginTop="8dp"
         android:backgroundTint="@color/darkBlue"
         android:text="Logout"
+        android:textColor="@color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

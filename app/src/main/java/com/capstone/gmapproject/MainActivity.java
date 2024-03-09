@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         View windowLayout = findViewById(R.id.window_layout);
         windowLayout.setVisibility(View.VISIBLE);
         }
-        Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
     }
     public void closeWindow(View view){
         //creating reference to the map, pulling params, changing the height

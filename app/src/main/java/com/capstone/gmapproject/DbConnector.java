@@ -35,7 +35,7 @@ public class DbConnector extends SQLiteOpenHelper {
         Log.d("dbHelper", "checkingExistence");
         try {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
-            checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READONLY);
+            checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
             Log.d("dbHelper", "db exists");
             //listAllEntriesOfTable("stations");
             listAllTables();
@@ -49,6 +49,14 @@ public class DbConnector extends SQLiteOpenHelper {
 
         }
         if (checkDB != null) {
+            String sql="SELECT name FROM history WHERE user_id = 1";
+            try{
+               Cursor c = checkDB.rawQuery(sql,null);
+               c.close();
+            } catch (SQLException e){
+                checkDB.execSQL("ALTER TABLE history ADD COLUMN name TEXT");
+                checkDB.execSQL("ALTER TABLE history ADD COLUMN address TEXT");
+            }
             checkDB.close();
         }
     }
@@ -90,7 +98,8 @@ public class DbConnector extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-
+        db.execSQL("ALTER TABLE history ADD COLUMN name TEXT");
+        db.execSQL("ALTER TABLE history ADD COLUMN address TEXT");
     }
 
     @Override
