@@ -7,16 +7,6 @@
     android:layout_margin="8dp"
     android:elevation="15dp">
 
-    <!-- Charger Type TextView -->
-    <TextView
-        android:id="@+id/txtShowChargerType"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text="Charger Type: Unknown"
-        android:layout_marginBottom="4dp"/>
-
     <!-- Connection Type TextView -->
     <TextView
         android:id="@+id/txtShowConnectionType"

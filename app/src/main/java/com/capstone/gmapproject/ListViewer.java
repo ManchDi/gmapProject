@@ -25,14 +25,13 @@ public class ListViewer extends RecyclerView.Adapter<ListViewer.ChargerViewHolde
         void onItemClick(Charger charger);
     }
     class ChargerViewHolder extends RecyclerView.ViewHolder {
-        private TextView chargerTypeTextView;
+
         private TextView connectionTypeTextView;
         private TextView wattageTextView;
 
         //actual placeholder for charger object
         public ChargerViewHolder(@NonNull View itemView) {
             super(itemView);
-            chargerTypeTextView = itemView.findViewById(R.id.txtShowChargerType);
             connectionTypeTextView = itemView.findViewById(R.id.txtShowConnectionType);
             wattageTextView = itemView.findViewById(R.id.txtShowWattage);
 
@@ -47,7 +46,6 @@ public class ListViewer extends RecyclerView.Adapter<ListViewer.ChargerViewHolde
 
         //translating charger params into view textfields.
         public void bind(Charger charger) {
-            chargerTypeTextView.setText(String.format("%s", charger.getChargerType()));
             connectionTypeTextView.setText(String.format("Connection: %s", charger.getConnectionType()));
             wattageTextView.setText(String.format("Wattage: %s", charger.getWattage()));
         }
