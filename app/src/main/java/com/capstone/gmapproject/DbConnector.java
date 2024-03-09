@@ -180,7 +180,6 @@ public class DbConnector extends SQLiteOpenHelper {
                 Charger charger = new Charger();
                 charger.setId(cursor.getInt(cursor.getColumnIndex("st_id")));
                 charger.setStationId(cursor.getInt(cursor.getColumnIndex("st_id")));
-                charger.setChargerType(cursor.getString(cursor.getColumnIndex("charger_type")));
                 charger.setPrice(cursor.getString(cursor.getColumnIndex("price")));
                 charger.setConnectionType(cursor.getString(cursor.getColumnIndex("connection_type")));
                 charger.setWattage(cursor.getString(cursor.getColumnIndex("wattage")));

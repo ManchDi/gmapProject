@@ -3,17 +3,15 @@ package com.capstone.gmapproject;
 public class Charger {
     private int id;
     private int stationId;
-    private String chargerType;
     private String price;
     private String connectionType;
     private String wattage;
 
    public Charger(){
    }
-    public Charger(int id, int stationId, String chargerType, String price, String connectionType, String wattage) {
+    public Charger(int id, int stationId, String price, String connectionType, String wattage) {
         this.id = id;
         this.stationId = stationId;
-        this.chargerType = chargerType;
         this.price = price;
         this.connectionType = connectionType;
         this.wattage = wattage;
@@ -34,14 +32,6 @@ public class Charger {
 
     public void setStationId(int stationId) {
         this.stationId = stationId;
-    }
-
-    public String getChargerType() {
-        return chargerType;
-    }
-
-    public void setChargerType(String chargerType) {
-        this.chargerType = chargerType;
     }
 
     public String getPrice() {
@@ -68,7 +58,6 @@ public class Charger {
         this.wattage = wattage;
     }
     public void print() {
-        System.out.println("Charger Type: " + chargerType);
         System.out.println("Connection Type: " + connectionType);
         System.out.println("Wattage: " + wattage);
     }

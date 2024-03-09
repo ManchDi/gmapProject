@@ -7,6 +7,7 @@ public class Station {
     private String name;
     private String address;
     private int chargerAmount;
+    private String chargerType;
     private double latitude;
     private double longitude;
 
@@ -14,11 +15,12 @@ public class Station {
     public Station() {
     }
 
-    public Station(int id, String name, String address, int chargerAmount, double latitude, double longitude) {
+    public Station(int id, String name, String address, int chargerAmount, String chargerType, double latitude, double longitude) {
         this.id = id;
         this.name = name;
         this.address = address;
         this.chargerAmount = chargerAmount;
+        this.chargerType = chargerType;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -54,6 +56,14 @@ public class Station {
 
     public void setChargerAmount(int chargerAmount) {
         this.chargerAmount = chargerAmount;
+    }
+
+    public String getChargerType() {
+        return chargerType;
+    }
+
+    public void setChargerType(String chargerType) {
+        this.chargerType = chargerType;
     }
 
     public double getLatitude() {
