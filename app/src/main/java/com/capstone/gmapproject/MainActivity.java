@@ -344,14 +344,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             db = dbConnector.getReadableDatabase();
             String newID = id.toString();
             chargerList = dbConnector.getChargers(newID);
-            RecyclerView recyclerView = findViewById(R.id.recycler_view_chargers);
+
+        //set the charger type in the new view
+        getStationType(id);
+
+        RecyclerView recyclerView = findViewById(R.id.recycler_view_chargers);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
             ListViewer adapter = new ListViewer(chargerList, charger -> {
                 // Item click
                 Log.d("dbConnector", "opened charger");
             });
             recyclerView.setAdapter(adapter);
-
 
         //creating reference to the map, pulling params, changing the height
         if(fullScreen) {
@@ -388,6 +391,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         windowLayout.setVisibility(View.VISIBLE);
         }
         //Toast.makeText(MainActivity.this, "id: "+id, Toast.LENGTH_SHORT).show();
+    }
+
+    private void getStationType(int stationID)
+    {
+        db = dbConnector.getReadableDatabase();
+
+        String chargerType = "Charger Type: ";
+        String typeQuery = "SELECT charger_type FROM stations WHERE st_id = ?";
+
+        Cursor cursor = db.rawQuery(typeQuery, new String[]{String.valueOf(stationID)});
+        cursor.moveToNext();
+        chargerType += cursor.getString(0);
+
+        TextView type = (TextView) findViewById(R.id.stationType);
+        type.setText(chargerType);
+
+        db.close();
     }
     public void closeWindow(View view){
         //creating reference to the map, pulling params, changing the height

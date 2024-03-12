@@ -94,7 +94,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
             android:layout_above="@+id/navigateButton"
-            android:layout_below="@id/id_map"
+            android:layout_below="@id/stationType"
             tools:ignore="NotSibling" />
 
         <!-- hide window button -->
@@ -107,7 +107,15 @@
             android:onClick="closeWindow"
             android:background="@android:color/transparent"
             android:src="@android:drawable/ic_delete" />
-        <Button
+
+    <TextView
+        android:id="@+id/stationType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/buttonCloseWindow"
+        android:text="Charger Type: " />
+
+    <Button
             android:id="@+id/navigateButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -118,6 +126,6 @@
             android:onClick="navigate"
             android:backgroundTint="@color/darkBlue"
             android:layout_centerHorizontal="true" />
-    </RelativeLayout>
+</RelativeLayout>
 
 </RelativeLayout>
