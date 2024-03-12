@@ -1,26 +1,17 @@
 package com.capstone.gmapproject;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -42,15 +33,11 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.util.ArrayList;
-import java.util.EventListener;
 import java.util.List;
 
 
@@ -108,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         icons=new ArrayList<>(7);
         int width=75; int height=75;
         for (int i=0; i<7; i++){
-            Bitmap originalBitmap = null;
+            Bitmap originalBitmap;
             try {
                 if(i==0){
                     InputStream is = getAssets().open("Logo-Tesla.bmp"); //0
@@ -156,8 +143,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setContentView(R.layout.activity_main);
          SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
          mapFragment.getMapAsync(this);
-         View windowLayout = findViewById(R.id.window_layout);
-
     }
 
     @Override
@@ -165,11 +150,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         gMap = googleMap;
         //Button for switching between Main and Profile
         ImageButton profileButton = (ImageButton) findViewById(R.id.prof);
-        profileButton.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-            }
-        });
+        profileButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
         // Check location permission
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -212,12 +193,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if (location != null) {
                             double lat=location.getLatitude() ;
                             double lng=location.getLongitude();
-                            LatLng currentLatLng = new LatLng(lat,lng );
                             removeMarkers();
                             placeStationsOnMap(dbConnector.getStations(lng,lat,defualtRadius));
                             // Move the camera to the user's current location and zoom in
-
-
                         } else {
                             Toast.makeText(MainActivity.this, "Unable to fetch location", Toast.LENGTH_LONG).show();
                         }
@@ -231,14 +209,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
     public void placeStationsOnMap(@NonNull List<Station> stations) {
         for (Station station : stations) {
-            // Create MarkerOptions for each station
             LatLng currentLatLng =new LatLng(station.getLatitude(), station.getLongitude());
             // Add the marker to the Google Map
             Marker marker = gMap.addMarker(new MarkerOptions().position(currentLatLng).title(station.getName()));
             marker.setTag(station.getId());
-            int width = 75; // in pixels
-            int height = 75; // in pixels
-            // Edit marker icon based on charger type
+            // Edit  icon based on charger
             switch(station.getChargerType()) {
                 case "unknown" :
                     Log.d("dpHelper","unknown ch type");
@@ -247,17 +222,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(0)));
                     break;
                 case "Electrify America" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(1)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(1)));break;
                 case "Shell Sky EV Technology" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(2)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(2)));break;
                 case "FLO" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(3)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(3)));break;
                 case "EV Connect" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(4)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(4)));break;
                 case "EVCS" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(5)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(5)));break;
                 case "Evgo" :
-                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(6)));                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(6)));break;
                 default :
                     break;
             }
