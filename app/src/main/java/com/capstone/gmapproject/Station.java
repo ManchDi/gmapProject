@@ -13,6 +13,10 @@ public class Station {
 
     // Constructors
     public Station() {
+        name="unknown";
+        address="unknown";
+        chargerAmount=0;
+        chargerType="unknown";
     }
 
     public Station(int id, String name, String address, int chargerAmount, String chargerType, double latitude, double longitude) {

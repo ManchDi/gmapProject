@@ -10,6 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
@@ -44,6 +46,7 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.util.ArrayList;
@@ -65,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private TextView radiusView;
     List<Marker> markerList;
     List<Charger> chargerList;
+    ArrayList<Bitmap> icons;
 
 
     @Override
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
         else
         {
+            initializeIcons();
             mapLayout();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // Request location permission
@@ -99,7 +104,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
-
+    public void initializeIcons(){
+        icons=new ArrayList<>(7);
+        int width=75; int height=75;
+        for (int i=0; i<7; i++){
+            Bitmap originalBitmap = null;
+            try {
+                if(i==0){
+                    InputStream is = getAssets().open("Logo-Tesla.bmp"); //0
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                } else if (i==1){
+                    InputStream is = getAssets().open("Logo-Shell.bmp");//1
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                } else if (i==2){
+                    InputStream is = getAssets().open("Logo-Flo.bmp");//2
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);               }
+                else if (i==3){
+                    InputStream is = getAssets().open("Logo-Evgo.bmp");//3
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                } else if (i==4){
+                    InputStream is = getAssets().open("Logo-EVCS.bmp");//4
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                } else if (i==5){
+                    InputStream is = getAssets().open("Logo-EvConnect.bmp");//5
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                } else if (i==6){
+                    InputStream is = getAssets().open("Logo-ElectrifyAmerica.bmp");//6
+                    originalBitmap = BitmapFactory.decodeStream(is);
+                    Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
+                    icons.add(i,resizedBitmap);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
     //function to switch layout to the map after login is authenticated
     public void mapLayout() {
         setContentView(R.layout.activity_main);
@@ -185,29 +236,28 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Add the marker to the Google Map
             Marker marker = gMap.addMarker(new MarkerOptions().position(currentLatLng).title(station.getName()));
             marker.setTag(station.getId());
+            int width = 75; // in pixels
+            int height = 75; // in pixels
             // Edit marker icon based on charger type
             switch(station.getChargerType()) {
+                case "unknown" :
+                    Log.d("dpHelper","unknown ch type");
+                    break;
                 case "Tesla" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Tesla.bmp"));
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(0)));
                     break;
                 case "Electrify America" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-ElectrifyAmerica.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(1)));                    break;
                 case "Shell Sky EV Technology" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Shell.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(2)));                    break;
                 case "FLO" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Flo.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(3)));                    break;
                 case "EV Connect" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-EvConnect.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(4)));                    break;
                 case "EVCS" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-EVCS.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(5)));                    break;
                 case "Evgo" :
-                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Evgo.bmp"));
-                    break;
+                    marker.setIcon(BitmapDescriptorFactory.fromBitmap(icons.get(6)));                    break;
                 default :
                     break;
             }

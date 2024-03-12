@@ -37,8 +37,8 @@ public class DbConnector extends SQLiteOpenHelper {
             String dbPath = context.getDatabasePath(DATABASE_NAME).getPath();
             checkDB = SQLiteDatabase.openDatabase(dbPath, null, SQLiteDatabase.OPEN_READWRITE);
             Log.d("dbHelper", "db exists");
-            //listAllEntriesOfTable("stations");
-            listAllTables();
+            listAllEntriesOfTable("stations");
+            //listAllTables();
 
         } catch (SQLException e) {
             // Database does not exist, create it
@@ -119,7 +119,7 @@ public class DbConnector extends SQLiteOpenHelper {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 String tableName = cursor.getString(0);
-                //Log.d("dbHelper", "Table name: " + tableName);
+                Log.d("dbHelper", "Table name: " + tableName);
                 cursor.moveToNext();
             }
             cursor.close();
@@ -160,6 +160,7 @@ public class DbConnector extends SQLiteOpenHelper {
                 station.setChargerAmount(cursor.getInt(cursor.getColumnIndex("charger_amount")));
                 station.setLatitude(cursor.getDouble(cursor.getColumnIndex("latitude")));
                 station.setLongitude(cursor.getDouble(cursor.getColumnIndex("longitude")));
+                station.setChargerType(cursor.getString(cursor.getColumnIndex("charger_type")));
                 stationList.add(station);
                 cursor.moveToNext();
             }
