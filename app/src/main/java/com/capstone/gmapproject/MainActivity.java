@@ -1,4 +1,5 @@
 package com.capstone.gmapproject;
+
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -33,6 +34,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.view.View;
 
 import java.io.IOException;
@@ -49,9 +51,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private SQLiteDatabase db;
     private static int userID;
     private static boolean loggedIn;
-    private boolean fullScreen=true;
+    private boolean fullScreen = true;
     private static String username;
-    private int defualtRadius=6, currentStationID=0;
+    private int defualtRadius = 6, currentStationID = 0;
     private TextView radiusView;
     List<Marker> markerList;
     List<Charger> chargerList;
@@ -62,23 +64,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         radiusView = (TextView) findViewById(R.id.text_view_id);
-       // radiusView.setText(defualtRadius);
+        // radiusView.setText(defualtRadius);
         dbConnector = new DbConnector(this);
-        markerList=new ArrayList<>();
-        chargerList=new ArrayList<>();
+        markerList = new ArrayList<>();
+        chargerList = new ArrayList<>();
         try {
             dbConnector.checkDatabaseExistence();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         //Check which screen to go to, if there is a userID stored from when someone logged in, go to map, otherwise to go login
-        if(!loggedIn)
-        {
+        if (!loggedIn) {
             Intent i = new Intent(this, LoginActivity.class);
             startActivity(i);
-        }
-        else
-        {
+        } else {
             initializeIcons();
             mapLayout();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -91,58 +90,61 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
 
     }
-    public void initializeIcons(){
-        icons=new ArrayList<>(7);
-        int width=75; int height=75;
-        for (int i=0; i<7; i++){
+
+    public void initializeIcons() {
+        icons = new ArrayList<>(7);
+        int width = 75;
+        int height = 75;
+        for (int i = 0; i < 7; i++) {
             Bitmap originalBitmap;
             try {
-                if(i==0){
+                if (i == 0) {
                     InputStream is = getAssets().open("Logo-Tesla.bmp"); //0
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
-                } else if (i==1){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 1) {
                     InputStream is = getAssets().open("Logo-Shell.bmp");//1
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
-                } else if (i==2){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 2) {
                     InputStream is = getAssets().open("Logo-Flo.bmp");//2
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);               }
-                else if (i==3){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 3) {
                     InputStream is = getAssets().open("Logo-Evgo.bmp");//3
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
-                } else if (i==4){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 4) {
                     InputStream is = getAssets().open("Logo-EVCS.bmp");//4
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
-                } else if (i==5){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 5) {
                     InputStream is = getAssets().open("Logo-EvConnect.bmp");//5
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
-                } else if (i==6){
+                    icons.add(i, resizedBitmap);
+                } else if (i == 6) {
                     InputStream is = getAssets().open("Logo-ElectrifyAmerica.bmp");//6
                     originalBitmap = BitmapFactory.decodeStream(is);
                     Bitmap resizedBitmap = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
-                    icons.add(i,resizedBitmap);
+                    icons.add(i, resizedBitmap);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
     }
+
     //function to switch layout to the map after login is authenticated
     public void mapLayout() {
         setContentView(R.layout.activity_main);
-         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
-         mapFragment.getMapAsync(this);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.id_map);
+        mapFragment.getMapAsync(this);
     }
 
     @Override
@@ -153,19 +155,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         profileButton.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
         // Check location permission
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Request location permission
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-        }
+
         zoomToCurrentLocation();
         gMap.setOnMarkerClickListener(marker -> {
             // Show the white window
-            if(marker.getTag()!=null){
+            if (marker.getTag() != null) {
                 Integer clickCount = (Integer) marker.getTag();
                 showWhiteWindow(clickCount);
-                currentStationID=clickCount;
+                currentStationID = clickCount;
             } else {
                 showWhiteWindow(0);
             }
@@ -173,7 +170,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             return false; // Return false to allow default marker behavior
         });
-        gMap.setMyLocationEnabled(true);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            gMap.setMyLocationEnabled(true);
+
+        }
+
     }
     public void refresh(android.view.View view) {
         // Check location permission
@@ -372,7 +373,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     {
         db = dbConnector.getReadableDatabase();
 
-        String chargerType = "Charger Type: ";
+        String chargerType = "";
         String typeQuery = "SELECT charger_type FROM stations WHERE st_id = ?";
 
         Cursor cursor = db.rawQuery(typeQuery, new String[]{String.valueOf(stationID)});

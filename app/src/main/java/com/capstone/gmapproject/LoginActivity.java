@@ -1,6 +1,8 @@
 package com.capstone.gmapproject;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,6 +10,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -26,7 +29,7 @@ import java.util.Iterator;
 import java.util.Queue;
 
 public class LoginActivity extends AppCompatActivity {
-
+    private static final int REQUEST_LOCATION_PERMISSION = 1;
     private int userID;
     private DbConnector dbConnect;
     private SQLiteDatabase db;
@@ -42,7 +45,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_screen);
         dbConnect = new DbConnector(this);
-
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Request location permission
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    REQUEST_LOCATION_PERMISSION);
+        }
         //Button for switching from login to create account
         //transition to account creation page
         createAccount = (Button) findViewById(R.id.btnCreate);
