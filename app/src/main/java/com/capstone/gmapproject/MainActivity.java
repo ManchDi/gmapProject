@@ -36,6 +36,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -184,6 +185,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             // Add the marker to the Google Map
             Marker marker = gMap.addMarker(new MarkerOptions().position(currentLatLng).title(station.getName()));
             marker.setTag(station.getId());
+            // Edit marker icon based on charger type
+            switch(station.getChargerType()) {
+                case "Tesla" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Tesla.bmp"));
+                    break;
+                case "Electrify America" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-ElectrifyAmerica.bmp"));
+                    break;
+                case "Shell Sky EV Technology" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Shell.bmp"));
+                    break;
+                case "FLO" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Flo.bmp"));
+                    break;
+                case "EV Connect" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-EvConnect.bmp"));
+                    break;
+                case "EVCS" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-EVCS.bmp"));
+                    break;
+                case "Evgo" :
+                    marker.setIcon(BitmapDescriptorFactory.fromAsset("Logo-Evgo.bmp"));
+                    break;
+                default :
+                    break;
+            }
             markerList.add(marker);
 
         }
