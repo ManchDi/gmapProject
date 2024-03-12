@@ -129,7 +129,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:text="navigate"
+            android:text="Navigate"
             android:textColor="@color/white"
             android:onClick="navigate"
             android:backgroundTint="@color/darkBlue"
